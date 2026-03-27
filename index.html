@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical Billing & Coding Foundations Interactive Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --surface2: #f0eeea;
+  --border: #e2dfd8;
+  --text: #1a1814;
+  --text2: #5a564e;
+  --text3: #8c8880;
+  --blue: #2563eb;
+  --blue-light: #eff6ff;
+  --blue-mid: #93c5fd;
+  --green: #16a34a;
+  --green-light: #f0fdf4;
+  --green-mid: #86efac;
+  --yellow: #ca8a04;
+  --yellow-light: #fefce8;
+  --yellow-mid: #fde047;
+  --red: #dc2626;
+  --red-light: #fff1f2;
+  --red-mid: #fca5a5;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --purple-mid: #c4b5fd;
+  --teal: #0891b2;
+  --teal-light: #ecfeff;
+  --orange: #ea580c;
+  --orange-light: #fff7ed;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 20px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+h1,h2,h3,h4 { font-family: 'DM Serif Display', serif; line-height: 1.2; }
+code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ─── HEADER ─── */
+.site-header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.site-logo {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.site-logo svg { width:22px; height:22px; fill:white; }
+.site-title { font-family:'DM Serif Display',serif; font-size:1.15rem; color:var(--text); flex:1; }
+.site-title span { color: var(--blue); }
+.header-score {
+  background: linear-gradient(135deg,#f0fdf4,#ecfeff);
+  border: 1.5px solid var(--green-mid);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.82rem; font-weight: 600;
+  color: var(--green);
+  white-space: nowrap;
+}
+
+/* ─── PROGRESS BAR ─── */
+.global-progress {
+  height: 4px;
+  background: var(--border);
+  position: sticky; top: 67px; z-index: 99;
+}
+.global-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+  transition: width 0.6s ease;
+  width: 0%;
+}
+
+/* ─── NAV TABS ─── */
+.nav-wrap {
+  background: var(--surface);
+  border-bottom: 1.5px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  position: sticky; top: 71px; z-index: 98;
+}
+.nav-tabs {
+  display: flex;
+  padding: 0 16px;
+  gap: 2px;
+  min-width: max-content;
+}
+.nav-tab {
+  padding: 10px 16px;
+  font-size: 0.8rem; font-weight: 600;
+  color: var(--text3);
+  cursor: pointer;
+  border: none; background: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  position: relative;
+}
+.nav-tab:hover { color: var(--blue); }
+.nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+.nav-tab .tab-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--surface2);
+  border-radius: 50%;
+  font-size: 0.68rem; margin-right: 5px;
+}
+.nav-tab.active .tab-num { background: var(--blue-light); color: var(--blue); }
+.nav-tab.completed .tab-num { background: var(--green-light); color: var(--green); }
+.nav-tab.completed::after {
+  content: '✓';
+  position: absolute; top: 6px; right: 4px;
+  font-size: 0.6rem; color: var(--green);
+}
+
+/* ─── MAIN CONTENT ─── */
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.page { max-width: 920px; margin: 0 auto; padding: 32px 20px 80px; }
+
+/* ─── SECTION HEADER ─── */
+.section-header {
+  margin-bottom: 28px;
+  padding: 24px 28px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.section-tag {
+  display: inline-block;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 999px; margin-bottom: 10px;
+}
+.tag-blue { background: var(--blue-light); color: var(--blue); }
+.tag-green { background: var(--green-light); color: var(--green); }
+.tag-purple { background: var(--purple-light); color: var(--purple); }
+.tag-yellow { background: var(--yellow-light); color: var(--yellow); }
+.section-header h2 { font-size: 1.8rem; margin-bottom: 8px; }
+.section-header p { color: var(--text2); max-width: 680px; }
+.learn-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+  margin-top: 16px;
+}
+@media(max-width:640px){ .learn-grid { grid-template-columns:1fr; } }
+.learn-item {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem; font-weight: 500;
+  display: flex; align-items: flex-start; gap: 7px;
+}
+.learn-item .li-icon { font-size: 1rem; flex-shrink:0; margin-top:1px; }
+.learn-item.blue { background:var(--blue-light); color:var(--blue); }
+.learn-item.green { background:var(--green-light); color:var(--green); }
+.learn-item.purple { background:var(--purple-light); color:var(--purple); }
+
+/* ─── INSTRUCTION BOX ─── */
+.instr-box {
+  background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+  border: 1.5px solid var(--blue-mid);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  font-size: 0.875rem;
+}
+.instr-box strong { color: var(--blue); display: block; margin-bottom: 4px; font-size: 0.82rem; letter-spacing:0.04em; text-transform:uppercase; }
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 24px; }
+
+/* ─── CODESET CARDS ─── */
+.codeset-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: var(--shadow-sm);
+}
+.codeset-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.codeset-card.active { border-color: var(--blue); }
+.codeset-header { padding: 18px 20px 14px; }
+.codeset-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem; font-weight: 600;
+  padding: 4px 12px; border-radius: 999px;
+  margin-bottom: 8px;
+}
+.codeset-title { font-size: 1.1rem; font-family: 'DM Serif Display', serif; }
+.codeset-body { padding: 0 20px 18px; font-size: 0.875rem; color: var(--text2); display:none; }
+.codeset-card.active .codeset-body { display:block; }
+.codeset-feature { display:flex; gap:8px; margin:6px 0; align-items:flex-start; }
+.codeset-feature .cf-icon { font-size:1rem; flex-shrink:0; }
+
+/* ─── ACCORDION ─── */
+.accordion { margin-bottom: 10px; border-radius: var(--radius-sm); overflow: hidden; border: 1.5px solid var(--border); }
+.accordion-header {
+  width: 100%; background: var(--surface); border: none;
+  padding: 14px 18px; display:flex; justify-content:space-between; align-items:center;
+  cursor: pointer; font-weight: 600; font-size: 0.9rem; text-align:left;
+  transition: background 0.2s;
+}
+.accordion-header:hover { background: var(--surface2); }
+.accordion-arrow { transition: transform 0.3s; font-size: 1rem; color: var(--text3); }
+.accordion-body { display: none; padding: 14px 18px; background: var(--bg); font-size: 0.875rem; color: var(--text2); line-height: 1.7; }
+.accordion.open .accordion-body { display: block; }
+.accordion.open .accordion-arrow { transform: rotate(180deg); }
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border-radius: 999px; border: none;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--blue); color: white; }
+.btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+.btn-green { background: var(--green); color: white; }
+.btn-green:hover { background: #15803d; }
+.btn-purple { background: var(--purple); color: white; }
+.btn-purple:hover { background: #6d28d9; }
+.btn-outline {
+  background: var(--surface); color: var(--blue);
+  border: 1.5px solid var(--blue-mid);
+}
+.btn-outline:hover { background: var(--blue-light); }
+.btn-yellow { background: var(--yellow); color: white; }
+.btn-sm { padding: 6px 14px; font-size: 0.78rem; }
+.btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+
+/* ─── QUIZ COMPONENTS ─── */
+.quiz-block {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin: 18px 0;
+  box-shadow: var(--shadow-sm);
+}
+.quiz-q {
+  font-weight: 600; margin-bottom: 14px; font-size: 0.95rem;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.quiz-num {
+  background: var(--blue); color: white;
+  border-radius: 50%; width: 24px; height: 24px;
+  display: inline-flex; align-items:center; justify-content:center;
+  font-size: 0.75rem; flex-shrink:0; margin-top: 1px;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border); cursor: pointer;
+  transition: all 0.2s; font-size: 0.875rem;
+  background: var(--surface);
+}
+.quiz-option:hover { background: var(--blue-light); border-color: var(--blue-mid); }
+.quiz-option.correct { background: var(--green-light); border-color: var(--green-mid); color: var(--green); }
+.quiz-option.wrong { background: var(--red-light); border-color: var(--red-mid); color: var(--red); }
+.quiz-option.disabled { pointer-events: none; }
+.quiz-option .opt-mark { font-size: 1rem; width: 20px; flex-shrink:0; }
+.feedback-box {
+  margin-top: 12px; padding: 12px 16px; border-radius: var(--radius-sm);
+  font-size: 0.85rem; display: none; line-height: 1.6;
+}
+.feedback-box.show { display: block; }
+.feedback-correct { background: var(--green-light); border: 1px solid var(--green-mid); color: var(--green); }
+.feedback-wrong { background: var(--red-light); border: 1px solid var(--red-mid); color: var(--red); }
+.feedback-info { background: var(--blue-light); border: 1px solid var(--blue-mid); color: var(--blue); }
+.rationale { margin-top: 8px; padding: 8px 12px; background: rgba(255,255,255,0.7); border-radius: 6px; font-size:0.82rem; }
+
+/* ─── POINTS BADGE ─── */
+.points-earned {
+  display: inline-flex; align-items:center; gap:4px;
+  padding: 3px 10px; border-radius: 999px;
+  background: var(--yellow-light); color: var(--yellow);
+  font-size: 0.78rem; font-weight: 700; margin-left: 8px;
+}
+
+/* ─── CODE VISUALIZER ─── */
+.code-vis {
+  display: flex; gap: 2px; align-items: stretch;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem; font-weight: 600;
+  margin: 16px 0;
+}
+.code-char {
+  padding: 10px 12px; border-radius: 6px;
+  transition: all 0.3s;
+  position: relative; cursor: default;
+  text-align: center; min-width: 38px;
+}
+.code-char .char-label {
+  position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
+  font-size: 0.62rem; font-weight: 600; white-space: nowrap;
+  font-family: 'DM Sans', sans-serif;
+}
+.code-vis-wrapper { padding-bottom: 30px; margin-bottom: 8px; }
+.char-cat1 { background: #dbeafe; color: #1d4ed8; }
+.char-cat2 { background: #bfdbfe; color: #1d4ed8; }
+.char-cat3 { background: #93c5fd; color: #1e40af; }
+.char-spec { background: #c4b5fd; color: #5b21b6; }
+.char-dot { background: var(--surface2); color: var(--text3); }
+
+/* ─── DRAG AND DROP ─── */
+.drag-zone {
+  min-height: 70px; border: 2px dashed var(--border);
+  border-radius: var(--radius-sm); padding: 10px;
+  display: flex; flex-wrap: wrap; gap: 6px; align-items:flex-start; align-content:flex-start;
+  transition: all 0.2s; background: var(--bg);
+}
+.drag-zone.over { border-color: var(--blue); background: var(--blue-light); }
+.drag-chip {
+  padding: 6px 12px; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 600;
+  cursor: grab; user-select: none; transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+.drag-chip:hover { transform: scale(1.03); }
+.drag-chip:active { cursor: grabbing; }
+.soap-s { background: #dbeafe; color: #1d4ed8; }
+.soap-o { background: #dcfce7; color: #166534; }
+.soap-a { background: #fef9c3; color: #854d0e; }
+.soap-p { background: #f3e8ff; color: #6b21a8; }
+
+/* ─── SOAP COLUMNS ─── */
+.soap-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin: 16px 0; }
+@media(max-width:600px){ .soap-grid { grid-template-columns: repeat(2,1fr); } }
+.soap-col { border-radius: var(--radius-sm); overflow: hidden; }
+.soap-col-header { padding: 10px 12px; font-weight: 700; font-size: 0.82rem; text-align:center; }
+.soap-col-header span { display:block; font-size:1.1rem; }
+.soap-drop { min-height: 120px; padding: 8px; border: 2px dashed transparent; transition:all 0.2s; }
+.soap-drop.over { border-color: rgba(0,0,0,0.2); }
+.soap-s-col .soap-col-header { background: #3b82f6; color:white; }
+.soap-s-col .soap-drop { background: #eff6ff; }
+.soap-o-col .soap-col-header { background: #22c55e; color:white; }
+.soap-o-col .soap-drop { background: #f0fdf4; }
+.soap-a-col .soap-col-header { background: #eab308; color:white; }
+.soap-a-col .soap-drop { background: #fefce8; }
+.soap-p-col .soap-col-header { background: #a855f7; color:white; }
+.soap-p-col .soap-drop { background: #faf5ff; }
+
+/* ─── COMPARISON TABLE ─── */
+.comp-table { width:100%; border-collapse: collapse; font-size: 0.85rem; border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow-sm); }
+.comp-table th { padding: 12px 14px; text-align:left; font-weight:700; font-size:0.78rem; letter-spacing:0.04em; text-transform:uppercase; }
+.comp-table td { padding: 11px 14px; vertical-align:top; border-top: 1px solid var(--border); }
+.comp-table tr:hover td { background: var(--surface2); }
+.th-cpt { background: #3b82f6; color:white; }
+.th-hcpcs { background: #22c55e; color:white; }
+.th-icd { background: #a855f7; color:white; }
+.th-label { background: var(--surface2); color: var(--text2); }
+
+/* ─── PROGRESS SECTION ─── */
+.section-progress {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.8rem; color: var(--text3); margin-bottom: 20px;
+}
+.section-prog-bar { flex: 1; height: 6px; background: var(--border); border-radius: 999px; overflow:hidden; }
+.section-prog-fill { height:100%; background: linear-gradient(90deg,var(--blue),var(--purple)); transition: width 0.4s ease; border-radius: 999px; }
+
+/* ─── BADGE ─── */
+.badge {
+  display: inline-flex; align-items:center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  font-weight: 700; font-size: 0.8rem;
+}
+.badge-blue { background: var(--blue-light); color: var(--blue); border: 1.5px solid var(--blue-mid); }
+.badge-green { background: var(--green-light); color: var(--green); border: 1.5px solid var(--green-mid); }
+.badge-purple { background: var(--purple-light); color: var(--purple); border: 1.5px solid var(--purple-mid); }
+.mastery-banner {
+  display: none; background: linear-gradient(135deg, #f0fdf4, #ecfeff);
+  border: 2px solid var(--green-mid); border-radius: var(--radius);
+  padding: 16px 20px; text-align:center; margin-top:24px;
+}
+.mastery-banner.show { display:block; animation: fadeIn 0.5s; }
+.mastery-banner h3 { color: var(--green); font-size:1.2rem; margin-bottom: 4px; }
+
+/* ─── HOVER GLOSSARY ─── */
+.gloss {
+  border-bottom: 2px dashed var(--blue-mid); cursor: help; position: relative;
+  color: var(--blue); font-weight: 500;
+}
+.gloss-tip {
+  display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: var(--text); color: white; padding: 8px 12px; border-radius: 8px;
+  font-size: 0.78rem; line-height: 1.5; width: max-content; max-width: 220px;
+  z-index: 200; box-shadow: var(--shadow-lg); pointer-events:none;
+  font-style: normal; font-weight: 400;
+}
+.gloss-tip::after {
+  content: ''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  border: 6px solid transparent; border-top-color: var(--text);
+}
+.gloss:hover .gloss-tip { display: block; animation: fadeIn 0.15s; }
+
+/* ─── SIMULATION ─── */
+.sim-step { display: none; }
+.sim-step.active { display: block; animation: fadeIn 0.3s; }
+.sim-step-indicator {
+  display: flex; gap: 6px; margin-bottom: 20px; flex-wrap:wrap;
+}
+.sim-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 0.75rem; font-weight: 700;
+  background: var(--border); color: var(--text3); transition: all 0.3s;
+}
+.sim-dot.active { background: var(--blue); color: white; }
+.sim-dot.done { background: var(--green); color: white; }
+
+/* ─── TIMED CHALLENGE ─── */
+.timer-ring {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  border: 5px solid var(--border);
+  display: flex; align-items:center; justify-content:center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.3rem; font-weight: 700;
+  position: relative; transition: border-color 0.3s;
+}
+.timer-ring.warning { border-color: var(--yellow); color: var(--yellow); }
+.timer-ring.danger { border-color: var(--red); color: var(--red); animation: pulse 0.5s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.06);} }
+.challenge-header {
+  display: flex; align-items:center; justify-content:space-between;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+}
+.challenge-score-display {
+  font-size: 1.6rem; font-weight: 700; font-family: 'DM Serif Display', serif;
+  color: var(--blue);
+}
+
+/* ─── REVEAL BUTTON ─── */
+.reveal-wrap { margin: 10px 0; }
+.reveal-btn {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 14px;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--text2);
+  display: flex; align-items:center; gap: 6px; transition: all 0.2s;
+}
+.reveal-btn:hover { background: var(--blue-light); color: var(--blue); border-color: var(--blue-mid); }
+.reveal-content { display:none; margin-top: 8px; padding: 12px 14px; background: var(--blue-light); border-radius: var(--radius-sm); font-size: 0.875rem; color: var(--text); border:1px solid var(--blue-mid); }
+.reveal-content.show { display: block; animation: fadeIn 0.2s; }
+
+/* ─── RAPID REVIEW ─── */
+.review-card {
+  border-radius: var(--radius); overflow:hidden; margin-bottom:14px;
+  box-shadow: var(--shadow-sm);
+}
+.review-card-header { padding: 12px 16px; font-weight: 700; font-size: 0.85rem; }
+.review-card-body { padding: 12px 16px; font-size: 0.85rem; background: var(--surface); line-height: 1.8; }
+
+/* ─── WELCOME ─── */
+.welcome-hero {
+  background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 50%, #ecfeff 100%);
+  border: 2px solid #c7d2fe;
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  text-align: center;
+  margin-bottom: 28px;
+}
+.welcome-hero h1 { font-size: 2.2rem; margin-bottom: 12px; }
+.welcome-hero h1 span { color: var(--blue); }
+.welcome-hero p { color: var(--text2); max-width: 560px; margin: 0 auto 20px; font-size: 0.95rem; }
+.tab-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 10px; margin: 20px 0; }
+.tab-preview-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  font-size: 0.8rem; cursor: pointer; transition: all 0.2s;
+  text-align:center;
+}
+.tab-preview-card:hover { border-color: var(--blue); background: var(--blue-light); color: var(--blue); transform: translateY(-2px); }
+.tab-preview-card .tpc-icon { font-size: 1.4rem; margin-bottom: 6px; }
+
+/* ─── MISC ─── */
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
+.info-callout { padding:14px 18px; border-radius:var(--radius-sm); margin:14px 0; font-size:0.875rem; border-left: 4px solid; }
+.callout-blue { background:var(--blue-light); border-color:var(--blue); color: var(--text); }
+.callout-yellow { background:var(--yellow-light); border-color:var(--yellow); color: var(--text); }
+.callout-green { background:var(--green-light); border-color:var(--green); color: var(--text); }
+.callout-red { background:var(--red-light); border-color:var(--red); color: var(--text); }
+.callout-purple { background:var(--purple-light); border-color:var(--purple); color: var(--text); }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:580px){ .two-col { grid-template-columns:1fr; } }
+.flow-arrow { text-align:center; font-size:1.4rem; color:var(--text3); margin: 6px 0; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--text);
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  padding: 16px;
+  font-size: 0.8rem;
+  margin-top: 40px;
+}
+footer span { color: white; font-weight: 600; }
+
+/* ─── SCENARIO CARDS ─── */
+.scenario-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin: 12px 0;
+}
+.scenario-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 8px;
+}
+.note-block {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-size: 0.875rem;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.8;
+  border: 1px solid var(--border);
+  margin: 12px 0;
+  white-space: pre-wrap;
+}
+.highlight-s { background: #bfdbfe; border-radius:2px; padding:0 2px; }
+.highlight-o { background: #bbf7d0; border-radius:2px; padding:0 2px; }
+.highlight-a { background: #fef08a; border-radius:2px; padding:0 2px; }
+.highlight-p { background: #e9d5ff; border-radius:2px; padding:0 2px; }
+
+/* ─── SCORE SUMMARY ─── */
+.score-summary {
+  background: linear-gradient(135deg, var(--blue-light), var(--purple-light));
+  border: 2px solid var(--purple-mid);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  text-align: center;
+  margin: 20px 0;
+}
+.score-big { font-size: 3rem; font-family: 'DM Serif Display', serif; color: var(--purple); }
+.score-grade { display: inline-block; padding: 4px 14px; border-radius: 999px; font-weight: 700; margin: 8px 0; }
+
+/* ─── ORIENTATION STEPS ─── */
+.orient-step { display:none; }
+.orient-step.active { display:block; animation:fadeIn 0.3s; }
+.orient-nav { display:flex; gap:8px; justify-content:center; margin-top:16px; }
+
+/* ─── MISSED REVIEW ─── */
+.missed-item { padding: 12px 14px; border-radius: var(--radius-sm); margin: 8px 0; background: var(--red-light); border: 1px solid var(--red-mid); font-size: 0.85rem; }
+.missed-item .mi-q { font-weight:600; color:var(--red); margin-bottom:4px; }
+.missed-item .mi-a { color: var(--green); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="site-logo">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/></svg>
+  </div>
+  <div class="site-title">Medical Billing &amp; Coding <span>Foundations Lab</span></div>
+  <div class="header-score">⭐ Score: <span id="totalScore">0</span> pts</div>
+</header>
+
+<div class="global-progress"><div class="global-progress-bar" id="globalProgress"></div></div>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="showTab(0)" id="tab0"><span class="tab-num">1</span>Welcome</button>
+    <button class="nav-tab" onclick="showTab(1)" id="tab1"><span class="tab-num">2</span>3 Code Sets</button>
+    <button class="nav-tab" onclick="showTab(2)" id="tab2"><span class="tab-num">3</span>SOAP Notes</button>
+    <button class="nav-tab" onclick="showTab(3)" id="tab3"><span class="tab-num">4</span>What Coding Is</button>
+    <button class="nav-tab" onclick="showTab(4)" id="tab4"><span class="tab-num">5</span>ICD-10 Structure</button>
+    <button class="nav-tab" onclick="showTab(5)" id="tab5"><span class="tab-num">6</span>Category &amp; Specificity</button>
+    <button class="nav-tab" onclick="showTab(6)" id="tab6"><span class="tab-num">7</span>Code-Finding Simulation</button>
+    <button class="nav-tab" onclick="showTab(7)" id="tab7"><span class="tab-num">8</span>Practice Arena</button>
+    <button class="nav-tab" onclick="showTab(8)" id="tab8"><span class="tab-num">9</span>Timed Challenge</button>
+    <button class="nav-tab" onclick="showTab(9)" id="tab9"><span class="tab-num">10</span>Rapid Review</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 1: WELCOME
+═══════════════════════════════════════════ -->
+<div class="tab-content active" id="content0">
+<div class="page">
+
+  <div class="welcome-hero">
+    <h1>Welcome to the <span>Medical Billing &amp; Coding</span><br>Foundations Lab</h1>
+    <p>This is a fully self-guided, interactive lesson. You will learn, practice, and check your understanding — all at your own pace, in one place.</p>
+    <div class="btn-group" style="justify-content:center">
+      <button class="btn btn-primary" onclick="showTab(1); scrollToTop();">🚀 Start Here → Section 2</button>
+      <button class="btn btn-outline" onclick="document.getElementById('howAcc').classList.toggle('open')">❓ How This Works</button>
+    </div>
+  </div>
+
+  <div class="accordion" id="howAcc">
+    <button class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+      How to Use This Lab <span class="accordion-arrow">▼</span>
+    </button>
+    <div class="accordion-body">
+      <p style="margin-bottom:10px"><strong>Step 1 — Move through the tabs in order.</strong> Each section builds on the previous one. Use the numbered tabs at the top.</p>
+      <p style="margin-bottom:10px"><strong>Step 2 — Read, then interact.</strong> Every section opens with a concept explanation, then gives you something to do: click, drag, sort, choose, or type.</p>
+      <p style="margin-bottom:10px"><strong>Step 3 — Check your answers.</strong> Every activity shows feedback immediately — correct answers, wrong answers, and rationales explaining <em>why</em>.</p>
+      <p style="margin-bottom:10px"><strong>Step 4 — Earn points.</strong> Every concept check earns you points. Your running total appears in the top right corner.</p>
+      <p><strong>Step 5 — Use the Practice Arena and Timed Challenge.</strong> After working through the content sections, test yourself with mixed activities and a timed quiz game.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="margin-bottom:16px; font-size:1.1rem;">What you will learn in this lab:</h3>
+  <div class="tab-preview-grid">
+    <div class="tab-preview-card" onclick="showTab(1)"><div class="tpc-icon">📚</div>The 3 Code Sets</div>
+    <div class="tab-preview-card" onclick="showTab(2)"><div class="tpc-icon">📋</div>SOAP Notes</div>
+    <div class="tab-preview-card" onclick="showTab(3)"><div class="tpc-icon">🔍</div>What Coding Is</div>
+    <div class="tab-preview-card" onclick="showTab(4)"><div class="tpc-icon">🔡</div>ICD-10-CM Structure</div>
+    <div class="tab-preview-card" onclick="showTab(5)"><div class="tpc-icon">🎯</div>Category &amp; Specificity</div>
+    <div class="tab-preview-card" onclick="showTab(6)"><div class="tpc-icon">🧭</div>Code-Finding Simulation</div>
+    <div class="tab-preview-card" onclick="showTab(7)"><div class="tpc-icon">🏋️</div>Practice Arena</div>
+    <div class="tab-preview-card" onclick="showTab(8)"><div class="tpc-icon">⏱️</div>Timed Challenge</div>
+    <div class="tab-preview-card" onclick="showTab(9)"><div class="tpc-icon">⚡</div>Rapid Review</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="instr-box">
+    <strong>🎯 Complete Sections in Order</strong>
+    Each section unlocks new vocabulary, context, and skills that the next section builds on. Work in order for the best experience. You can always go back to review.
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:12px; font-size:1rem;">Button Legend</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+      <span class="btn btn-primary btn-sm">▶ Try This Now</span>
+      <span class="btn btn-green btn-sm">✓ Check My Thinking</span>
+      <span class="btn btn-outline btn-sm">💡 Why This Matters</span>
+      <span class="btn btn-purple btn-sm">🏆 Challenge Mode</span>
+      <span class="btn btn-yellow btn-sm">⚠ Common Mistake</span>
+    </div>
+    <p style="font-size:0.82rem; color:var(--text2);">Blue = action. Green = check your answer. Outline = extra info. Purple = challenge. Yellow = watch out.</p>
+  </div>
+
+  <div class="mastery-banner show" style="margin-top:16px;">
+    <h3>✅ Welcome Complete — You Know How to Navigate This Lab!</h3>
+    <p style="color:var(--text2); font-size:0.875rem;">Head to Section 2 to begin learning the 3 code sets.</p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="showTab(1); scrollToTop();">→ Go to Section 2</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 2: 3 CODE SETS
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content1">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-blue">Section 2</div>
+    <h2>Meet the 3 Code Sets</h2>
+    <p>In medical billing and coding, three main "books" (code sets) are used to report what happened during a patient encounter. You need to know what each one is for — and when to use it.</p>
+    <div class="learn-grid">
+      <div class="learn-item blue"><span class="li-icon">📖</span>What CPT, HCPCS Level II, and ICD-10-CM each do</div>
+      <div class="learn-item blue"><span class="li-icon">🔄</span>How they are different from each other</div>
+      <div class="learn-item blue"><span class="li-icon">📝</span>When each one is used in practice</div>
+    </div>
+  </div>
+
+  <div class="instr-box">
+    <strong>📌 What to Do</strong>
+    Click each code set card below to expand its details. Then use the comparison table. Finally, complete the mini-scenarios to check your understanding.
+  </div>
+
+  <div class="card-grid" id="codesetGrid">
+    <!-- CPT -->
+    <div class="codeset-card" id="cs-cpt" onclick="toggleCodeset('cpt')">
+      <div class="codeset-header" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">
+        <div class="codeset-badge" style="background:#3b82f6;color:white">CPT</div>
+        <div class="codeset-title">Current Procedural Terminology</div>
+        <div style="font-size:0.78rem;color:var(--text3);margin-top:4px">Click to expand ▼</div>
+      </div>
+      <div class="codeset-body">
+        <div class="codeset-feature"><span class="cf-icon">🔧</span><span><strong>What it reports:</strong> Procedures and services performed by healthcare providers — things the provider <em>did</em> to the patient.</span></div>
+        <div class="codeset-feature"><span class="cf-icon">📋</span><span><strong>Code format:</strong> 5-digit numeric codes (e.g., 99213, 27447)</span></div>
+        <div class="codeset-feature"><span class="cf-icon">🏥</span><span><strong>Examples:</strong> Office visits, surgeries, lab tests ordered by the provider, physical therapy treatments, injections</span></div>
+        <div class="codeset-feature"><span class="cf-icon">🎯</span><span><strong>Think of it as:</strong> <em>"What did the provider DO?"</em></span></div>
+        <div class="codeset-feature"><span class="cf-icon">📚</span><span><strong>Published by:</strong> American Medical Association (AMA)</span></div>
+        <div class="info-callout callout-blue" style="margin-top:10px">
+          <strong>Example:</strong> A patient comes in for a routine office visit. The provider examines the patient and reviews their medication. That visit → CPT code 99213 (Office/outpatient visit, established patient, moderate complexity).
+        </div>
+      </div>
+    </div>
+    <!-- HCPCS -->
+    <div class="codeset-card" id="cs-hcpcs" onclick="toggleCodeset('hcpcs')">
+      <div class="codeset-header" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+        <div class="codeset-badge" style="background:#22c55e;color:white">HCPCS II</div>
+        <div class="codeset-title">Healthcare Common Procedure Coding System Level II</div>
+        <div style="font-size:0.78rem;color:var(--text3);margin-top:4px">Click to expand ▼</div>
+      </div>
+      <div class="codeset-body">
+        <div class="codeset-feature"><span class="cf-icon">🩹</span><span><strong>What it reports:</strong> Supplies, equipment, medications, and services not covered in CPT — especially those billed to Medicare/Medicaid.</span></div>
+        <div class="codeset-feature"><span class="cf-icon">📋</span><span><strong>Code format:</strong> 1 letter + 4 numbers (e.g., A6216, E0601, J0696)</span></div>
+        <div class="codeset-feature"><span class="cf-icon">🏥</span><span><strong>Examples:</strong> Durable medical equipment (wheelchairs, walkers), wound dressings, ambulance services, injectable drugs, orthotic/prosthetic devices</span></div>
+        <div class="codeset-feature"><span class="cf-icon">🎯</span><span><strong>Think of it as:</strong> <em>"What did the patient RECEIVE or what was SUPPLIED?"</em></span></div>
+        <div class="codeset-feature"><span class="cf-icon">📚</span><span><strong>Published by:</strong> Centers for Medicare &amp; Medicaid Services (CMS)</span></div>
+        <div class="info-callout callout-green" style="margin-top:10px">
+          <strong>Example:</strong> A patient is prescribed a wheelchair after hip surgery. The supplier bills for that wheelchair → HCPCS Level II code K0001 (Standard manual wheelchair).
+        </div>
+      </div>
+    </div>
+    <!-- ICD-10-CM -->
+    <div class="codeset-card" id="cs-icd" onclick="toggleCodeset('icd')">
+      <div class="codeset-header" style="background:linear-gradient(135deg,#faf5ff,#ede9fe)">
+        <div class="codeset-badge" style="background:#a855f7;color:white">ICD-10-CM</div>
+        <div class="codeset-title">International Classification of Diseases, 10th Revision</div>
+        <div style="font-size:0.78rem;color:var(--text3);margin-top:4px">Click to expand ▼</div>
+      </div>
+      <div class="codeset-body">
+        <div class="codeset-feature"><span class="cf-icon">🩺</span><span><strong>What it reports:</strong> Diagnoses, conditions, diseases, symptoms, and reasons for the encounter — the <em>why</em> of the visit.</span></div>
+        <div class="codeset-feature"><span class="cf-icon">📋</span><span><strong>Code format:</strong> 1 letter + 2 numbers + decimal + up to 4 more characters (e.g., J06.9, M54.5, Z00.00)</span></div>
+        <div class="codeset-feature"><span class="cf-icon">🏥</span><span><strong>Examples:</strong> Type 2 diabetes, hypertension, acute sinusitis, broken wrist, routine wellness exam</span></div>
+        <div class="codeset-feature"><span class="cf-icon">🎯</span><span><strong>Think of it as:</strong> <em>"WHY did the patient come in? What is WRONG?"</em></span></div>
+        <div class="codeset-feature"><span class="cf-icon">📚</span><span><strong>Published by:</strong> World Health Organization (WHO) / adapted by CMS for US use</span></div>
+        <div class="info-callout callout-purple" style="margin-top:10px">
+          <strong>Example:</strong> That same office visit patient has Type 2 diabetes. The biller needs to report the diagnosis → ICD-10-CM code E11.9 (Type 2 diabetes mellitus without complications).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="margin-bottom:12px">Side-by-Side Comparison</h3>
+  <div style="overflow-x:auto; margin-bottom:24px;">
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th class="th-label">Feature</th>
+        <th class="th-cpt">CPT</th>
+        <th class="th-hcpcs">HCPCS Level II</th>
+        <th class="th-icd">ICD-10-CM</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Reports</strong></td><td>Procedures / services done</td><td>Supplies, equipment, drugs, non-CPT services</td><td>Diagnoses / conditions / reasons for visit</td></tr>
+      <tr><td><strong>Answers</strong></td><td>"What did the provider DO?"</td><td>"What was SUPPLIED/GIVEN?"</td><td>"WHY did the patient come in?"</td></tr>
+      <tr><td><strong>Format</strong></td><td>5 digits: <code>99213</code></td><td>1 letter + 4 digits: <code>K0001</code></td><td>Letter + numbers: <code>E11.9</code></td></tr>
+      <tr><td><strong>Publisher</strong></td><td>AMA</td><td>CMS</td><td>WHO / CMS</td></tr>
+      <tr><td><strong>Common use</strong></td><td>Office visits, surgeries, labs</td><td>DME, ambulance, injectable drugs</td><td>Every claim — always paired with CPT or HCPCS</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="margin-bottom:6px">🎯 "Which code set would you use?" Scenarios</h3>
+  <p style="font-size:0.875rem; color:var(--text2); margin-bottom:16px">Read each scenario and click the code set you would use to report it. Get instant feedback.</p>
+
+  <div id="cs-scenarios">
+    <!-- Scenario 1 -->
+    <div class="scenario-card">
+      <div class="scenario-label">Scenario 1</div>
+      <p style="margin-bottom:10px; font-size:0.9rem">A patient is seen by a cardiologist for chest pain. The cardiologist performs an EKG and interprets it. What code set reports what the cardiologist DID?</p>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(1,'cpt',this)">CPT</button>
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(1,'hcpcs',this)">HCPCS Level II</button>
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(1,'icd',this)">ICD-10-CM</button>
+      </div>
+      <div class="feedback-box" id="fb-sc1"></div>
+    </div>
+    <!-- Scenario 2 -->
+    <div class="scenario-card">
+      <div class="scenario-label">Scenario 2</div>
+      <p style="margin-bottom:10px; font-size:0.9rem">That same patient is diagnosed with atrial fibrillation. What code set reports the DIAGNOSIS?</p>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(2,'cpt',this)">CPT</button>
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(2,'hcpcs',this)">HCPCS Level II</button>
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(2,'icd',this)">ICD-10-CM</button>
+      </div>
+      <div class="feedback-box" id="fb-sc2"></div>
+    </div>
+    <!-- Scenario 3 -->
+    <div class="scenario-card">
+      <div class="scenario-label">Scenario 3</div>
+      <p style="margin-bottom:10px; font-size:0.9rem">After discharge, a patient needs a standard walker to help with mobility. The medical supply company needs to bill for the walker itself. Which code set?</p>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(3,'cpt',this)">CPT</button>
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(3,'hcpcs',this)">HCPCS Level II</button>
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(3,'icd',this)">ICD-10-CM</button>
+      </div>
+      <div class="feedback-box" id="fb-sc3"></div>
+    </div>
+    <!-- Scenario 4 -->
+    <div class="scenario-card">
+      <div class="scenario-label">Scenario 4</div>
+      <p style="margin-bottom:10px; font-size:0.9rem">A provider injects a patient with a specific medication directly in the office. The billing team needs to code for both the injection AND the drug separately. The DRUG itself (not the injection service) would use which code set?</p>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(4,'cpt',this)">CPT</button>
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(4,'hcpcs',this)">HCPCS Level II</button>
+        <button class="btn btn-outline btn-sm" onclick="checkScenario(4,'icd',this)">ICD-10-CM</button>
+      </div>
+      <div class="feedback-box" id="fb-sc4"></div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="divider"></div>
+  <h3 style="margin-bottom:14px">📝 Concept Check — 3 Code Sets</h3>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">1</span>Which code set would you use to report that a provider performed a knee replacement surgery?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q2-1','a','CPT',this,true,'CPT reports procedures and services the provider performed. A knee replacement is a surgical procedure — that is CPT.',10)">
+        <span class="opt-mark">A</span> CPT — it reports procedures and services
+      </div>
+      <div class="quiz-option" onclick="ansQuiz('q2-1','b','CPT',this,false,'ICD-10-CM reports diagnoses and conditions, not the procedures performed. You would need ICD-10-CM for the reason (diagnosis) but not the surgery itself.',10)">
+        <span class="opt-mark">B</span> ICD-10-CM — it covers what the provider did
+      </div>
+      <div class="quiz-option" onclick="ansQuiz('q2-1','c','CPT',this,false,'HCPCS Level II covers supplies and equipment, not surgical procedures performed by a provider.',10)">
+        <span class="opt-mark">C</span> HCPCS Level II — it handles all surgical supplies
+      </div>
+    </div>
+    <div class="feedback-box" id="q2-1"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">2</span>A patient is diagnosed with Type 2 diabetes. Which code set reports this diagnosis on the claim?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q2-2','b','ICD-10-CM',this,false,'CPT reports what the provider did — the services performed — not the diagnosis.',10)">
+        <span class="opt-mark">A</span> CPT
+      </div>
+      <div class="quiz-option" onclick="ansQuiz('q2-2','b','ICD-10-CM',this,true,'ICD-10-CM is the code set for diagnoses and conditions. Type 2 diabetes is a diagnosis — it explains WHY the patient was seen.',10)">
+        <span class="opt-mark">B</span> ICD-10-CM
+      </div>
+      <div class="quiz-option" onclick="ansQuiz('q2-2','b','ICD-10-CM',this,false,'HCPCS Level II is for supplies and equipment, not for diagnoses.',10)">
+        <span class="opt-mark">C</span> HCPCS Level II
+      </div>
+    </div>
+    <div class="feedback-box" id="q2-2"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">3</span>Which statement best describes the relationship between these three code sets?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q2-3','c','They work together',this,false,'They are not interchangeable. Each one reports a different type of information. Choosing the wrong one for the wrong purpose is a billing error.',10)">
+        <span class="opt-mark">A</span> They are interchangeable — you can use any of them for any purpose
+      </div>
+      <div class="quiz-option" onclick="ansQuiz('q2-3','c','They work together',this,false,'CPT is always used on claims — but ICD-10-CM is also required on nearly every claim. They are used together.',10)">
+        <span class="opt-mark">B</span> Only CPT is used on claims; the others are optional
+      </div>
+      <div class="quiz-option" onclick="ansQuiz('q2-3','c','They work together',this,true,'Each code set reports a different piece of the picture. CPT = what was done. HCPCS II = what was supplied. ICD-10-CM = why it was done. They typically appear together on a claim.',10)">
+        <span class="opt-mark">C</span> They each report something different — procedures, supplies, and diagnoses — and often appear together on one claim
+      </div>
+    </div>
+    <div class="feedback-box" id="q2-3"></div>
+  </div>
+
+  <div class="mastery-banner" id="mastery2">
+    <h3>🏅 Section 2 Complete!</h3>
+    <p style="color:var(--text2); font-size:0.875rem;">You now understand the three main code sets. Move to Section 3 to learn about SOAP notes.</p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="showTab(2); scrollToTop();">→ Go to Section 3: SOAP Notes</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 3: SOAP NOTES
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content2">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-blue">Section 3</div>
+    <h2>SOAP Notes Interactive Lab</h2>
+    <p>Before a coder can assign any code, they must read the provider's documentation. The most common format for that documentation is the SOAP note. You need to understand exactly what belongs in each part.</p>
+    <div class="learn-grid">
+      <div class="learn-item blue"><span class="li-icon">📝</span>What each letter in SOAP stands for</div>
+      <div class="learn-item blue"><span class="li-icon">🔍</span>What information belongs in each section</div>
+      <div class="learn-item blue"><span class="li-icon">🎯</span>How to identify SOAP sections in real notes</div>
+    </div>
+  </div>
+
+  <div class="instr-box">
+    <strong>📌 What to Do</strong>
+    First, click each SOAP card to learn what it means. Then drag the note fragments into the correct SOAP column. Finally, answer the concept check questions.
+  </div>
+
+  <!-- SOAP Cards -->
+  <div class="card-grid">
+    <div class="card" style="border-top:4px solid #3b82f6">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#3b82f6;color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;font-family:'DM Serif Display',serif">S</div>
+        <h3 style="font-size:1.1rem">Subjective</h3>
+      </div>
+      <p style="font-size:0.875rem;color:var(--text2);margin-bottom:8px"><strong>What the PATIENT says.</strong> These are the patient's own words — their complaints, symptoms, and history as they report them.</p>
+      <div class="info-callout callout-blue">
+        <strong>Examples:</strong> "Chief complaint: headache for 3 days." / "Patient reports nausea and dizziness." / "Denies fever or chills."
+      </div>
+      <p style="font-size:0.78rem;color:var(--text3);margin-top:8px">⚡ Coder's eye: This section helps identify the <em>reason for the visit</em>.</p>
+    </div>
+    <div class="card" style="border-top:4px solid #22c55e">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#22c55e;color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;font-family:'DM Serif Display',serif">O</div>
+        <h3 style="font-size:1.1rem">Objective</h3>
+      </div>
+      <p style="font-size:0.875rem;color:var(--text2);margin-bottom:8px"><strong>What the PROVIDER observes and measures.</strong> These are measurable, observable findings — not the patient's opinion.</p>
+      <div class="info-callout callout-green">
+        <strong>Examples:</strong> Vital signs (BP 138/84), physical exam findings, lab results, imaging results, temperature.
+      </div>
+      <p style="font-size:0.78rem;color:var(--text3);margin-top:8px">⚡ Coder's eye: This section supports the diagnosis with documented evidence.</p>
+    </div>
+    <div class="card" style="border-top:4px solid #eab308">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#eab308;color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;font-family:'DM Serif Display',serif">A</div>
+        <h3 style="font-size:1.1rem">Assessment</h3>
+      </div>
+      <p style="font-size:0.875rem;color:var(--text2);margin-bottom:8px"><strong>The provider's diagnosis or clinical impression.</strong> This is what the provider concludes after reviewing subjective and objective information.</p>
+      <div class="info-callout callout-yellow">
+        <strong>Examples:</strong> "Diagnosis: Acute sinusitis." / "Assessment: Possible anxiety disorder." / "Impression: Type 2 diabetes, uncontrolled."
+      </div>
+      <p style="font-size:0.78rem;color:var(--text3);margin-top:8px">⚡ Coder's eye: <strong>This is the most important section for ICD-10-CM coding.</strong></p>
+    </div>
+    <div class="card" style="border-top:4px solid #a855f7">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#a855f7;color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem;font-family:'DM Serif Display',serif">P</div>
+        <h3 style="font-size:1.1rem">Plan</h3>
+      </div>
+      <p style="font-size:0.875rem;color:var(--text2);margin-bottom:8px"><strong>What the provider is going to DO next.</strong> This includes treatments, prescriptions, referrals, tests ordered, and follow-up instructions.</p>
+      <div class="info-callout callout-purple">
+        <strong>Examples:</strong> "Prescribe amoxicillin 500mg TID x10 days." / "Order CBC and CMP." / "Refer to cardiologist." / "Return in 2 weeks."
+      </div>
+      <p style="font-size:0.78rem;color:var(--text3);margin-top:8px">⚡ Coder's eye: Procedures and services coded in CPT often come from this section.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="margin-bottom:6px">🧩 Drag-and-Drop: Sort the Statements</h3>
+  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:14px">Drag each statement below into the correct SOAP column. Not sure? Use the card definitions above as a reference.</p>
+
+  <!-- Chip bank -->
+  <div style="margin-bottom:12px">
+    <div style="font-size:0.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Drag these statements:</div>
+    <div class="drag-zone" id="chipBank" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropToBank(event)">
+      <div class="drag-chip soap-s" draggable="true" ondragstart="dragStart(event,'s')" data-cat="s">Patient complains of lower back pain for 1 week</div>
+      <div class="drag-chip soap-o" draggable="true" ondragstart="dragStart(event,'o')" data-cat="o">BP: 125/82, HR: 74 bpm, Temp: 98.6°F</div>
+      <div class="drag-chip soap-a" draggable="true" ondragstart="dragStart(event,'a')" data-cat="a">Diagnosis: Acute lumbar strain</div>
+      <div class="drag-chip soap-p" draggable="true" ondragstart="dragStart(event,'p')" data-cat="p">Prescribe ibuprofen 600mg, order lumbar X-ray</div>
+      <div class="drag-chip soap-s" draggable="true" ondragstart="dragStart(event,'s')" data-cat="s">Patient denies fever, numbness, or radiating pain</div>
+      <div class="drag-chip soap-o" draggable="true" ondragstart="dragStart(event,'o')" data-cat="o">Tenderness on palpation of L3-L5 region</div>
+      <div class="drag-chip soap-a" draggable="true" ondragstart="dragStart(event,'a')" data-cat="a">Impression: No evidence of disc herniation at this time</div>
+      <div class="drag-chip soap-p" draggable="true" ondragstart="dragStart(event,'p')" data-cat="p">Follow up in 2 weeks if no improvement</div>
+    </div>
+  </div>
+
+  <div class="soap-grid">
+    <div class="soap-col soap-s-col">
+      <div class="soap-col-header"><span>S</span>Subjective</div>
+      <div class="soap-drop" id="drop-s" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropToSOAP(event,'s')"></div>
+    </div>
+    <div class="soap-col soap-o-col">
+      <div class="soap-col-header"><span>O</span>Objective</div>
+      <div class="soap-drop" id="drop-o" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropToSOAP(event,'o')"></div>
+    </div>
+    <div class="soap-col soap-a-col">
+      <div class="soap-col-header"><span>A</span>Assessment</div>
+      <div class="soap-drop" id="drop-a" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropToSOAP(event,'a')"></div>
+    </div>
+    <div class="soap-col soap-p-col">
+      <div class="soap-col-header"><span>P</span>Plan</div>
+      <div class="soap-drop" id="drop-p" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="dropToSOAP(event,'p')"></div>
+    </div>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-green" onclick="checkSOAP()">✓ Check My SOAP Sort</button>
+    <button class="btn btn-outline" onclick="resetSOAP()">↺ Reset</button>
+  </div>
+  <div class="feedback-box" id="soapFeedback"></div>
+
+  <div class="divider"></div>
+  <h3 style="margin-bottom:8px">📄 Read a Real Note — Identify the Sections</h3>
+  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:12px">Read the note below. Click the section letters to highlight what belongs where.</p>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+    <button class="btn btn-sm" style="background:#3b82f6;color:white" onclick="highlightSOAP('s')">Highlight S</button>
+    <button class="btn btn-sm" style="background:#22c55e;color:white" onclick="highlightSOAP('o')">Highlight O</button>
+    <button class="btn btn-sm" style="background:#eab308;color:white" onclick="highlightSOAP('a')">Highlight A</button>
+    <button class="btn btn-sm" style="background:#a855f7;color:white" onclick="highlightSOAP('p')">Highlight P</button>
+    <button class="btn btn-sm btn-outline" onclick="clearHighlights()">Clear All</button>
+  </div>
+
+  <div class="note-block" id="soapNote">
+<span id="sn-s" style="display:none;background:#bfdbfe;border-radius:3px;padding:1px 2px">S: </span>Patient is a 45-year-old female presenting with complaints of persistent headache and fatigue for the past 5 days. She reports the headache is located in the frontal region and rates it 6/10. She denies nausea, vomiting, or visual changes. No recent travel or sick contacts.
+
+<span id="sn-o" style="display:none;background:#bbf7d0;border-radius:3px;padding:1px 2px">O: </span>Vital signs: BP 142/88, HR 78, Temp 98.4°F, RR 16. General: Alert and oriented, no acute distress. HEENT: Mild frontal sinus tenderness on palpation. No nuchal rigidity. Eyes: PERRL. Remainder of exam unremarkable.
+
+<span id="sn-a" style="display:none;background:#fef08a;border-radius:3px;padding:1px 2px">A: </span>1. Acute frontal sinusitis
+2. Elevated blood pressure — monitor closely
+
+<span id="sn-p" style="display:none;background:#e9d5ff;border-radius:3px;padding:1px 2px">P: </span>1. Prescribe amoxicillin-clavulanate 875mg BID x 10 days
+2. Recommend OTC ibuprofen 400mg PRN for headache
+3. Saline nasal irrigation
+4. Check blood pressure in 2 weeks
+5. Return to clinic if symptoms worsen or fever develops</div>
+
+  <div class="reveal-wrap">
+    <button class="reveal-btn" onclick="toggleReveal('soapNoteGuide')">🔍 Show SOAP Section Labels</button>
+    <div class="reveal-content" id="soapNoteGuide">
+      <strong>S (Subjective):</strong> Lines 1–4 — everything the patient reports: headache, fatigue, location, severity, denials<br>
+      <strong>O (Objective):</strong> Lines 5–8 — vital signs and physical exam findings the provider documented<br>
+      <strong>A (Assessment):</strong> Lines 9–10 — the provider's diagnoses (sinusitis, elevated BP)<br>
+      <strong>P (Plan):</strong> Lines 11–15 — prescriptions, instructions, and follow-up ordered
+    </div>
+  </div>
+
+  <!-- SOAP Quiz -->
+  <div class="divider"></div>
+  <h3 style="margin-bottom:14px">📝 Concept Check — SOAP Notes</h3>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">1</span>A provider writes: "Patient states she has had knee pain for two weeks, worse when climbing stairs." Which SOAP section does this belong to?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q3-1','a','S',this,true,'This is what the patient SAYS — her own report of pain, its duration, and what makes it worse. That is Subjective information.',10)"><span class="opt-mark">A</span>S — Subjective</div>
+      <div class="quiz-option" onclick="ansQuiz('q3-1','a','S',this,false,'Objective is what the provider measures or observes. The patient reporting her own symptoms is Subjective.',10)"><span class="opt-mark">B</span>O — Objective</div>
+      <div class="quiz-option" onclick="ansQuiz('q3-1','a','S',this,false,'Assessment is the diagnosis or clinical impression, not the patient\'s complaint.',10)"><span class="opt-mark">C</span>A — Assessment</div>
+      <div class="quiz-option" onclick="ansQuiz('q3-1','a','S',this,false,'Plan is what the provider decides to do next. This is the patient\'s complaint, which is Subjective.',10)"><span class="opt-mark">D</span>P — Plan</div>
+    </div>
+    <div class="feedback-box" id="q3-1"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">2</span>Which SOAP section is most important for assigning an ICD-10-CM diagnosis code?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q3-2','b','A',this,false,'Subjective is the patient\'s complaint — useful context, but the coder codes the provider\'s documented diagnosis, not the patient\'s words.',10)"><span class="opt-mark">A</span>S — Subjective (the patient described the problem)</div>
+      <div class="quiz-option" onclick="ansQuiz('q3-2','b','A',this,true,'The Assessment section contains the provider\'s official diagnosis or clinical impression. ICD-10-CM codes are assigned to document diagnoses — which come from the Assessment.',10)"><span class="opt-mark">B</span>A — Assessment (the provider documented the diagnosis here)</div>
+      <div class="quiz-option" onclick="ansQuiz('q3-2','b','A',this,false,'The Plan contains what the provider will do — treatments and follow-up. CPT codes often come from the Plan, but diagnosis codes come from Assessment.',10)"><span class="opt-mark">C</span>P — Plan (this is where the codes are listed)</div>
+    </div>
+    <div class="feedback-box" id="q3-2"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">3</span>A provider documents: "Refer patient to orthopedic surgery. Order MRI of right knee. Prescribe naproxen 500mg BID." This belongs in which SOAP section?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q3-3','c','P',this,false,'Objective is observed findings and measurements, not orders or referrals.',10)"><span class="opt-mark">A</span>O — Objective</div>
+      <div class="quiz-option" onclick="ansQuiz('q3-3','c','P',this,false,'Assessment is the diagnosis. Referrals and prescriptions are what the provider is going to DO.',10)"><span class="opt-mark">B</span>A — Assessment</div>
+      <div class="quiz-option" onclick="ansQuiz('q3-3','c','P',this,true,'Plan contains all the provider\'s orders: referrals, prescriptions, imaging orders, and follow-up instructions. This is also where a coder often finds the services to code in CPT.',10)"><span class="opt-mark">C</span>P — Plan</div>
+    </div>
+    <div class="feedback-box" id="q3-3"></div>
+  </div>
+
+  <div class="mastery-banner" id="mastery3">
+    <h3>🏅 Section 3 Complete!</h3>
+    <p style="color:var(--text2); font-size:0.875rem;">You understand SOAP notes and how coders use them. Move to Section 4 to learn what coding actually is.</p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="showTab(3); scrollToTop();">→ Go to Section 4: What Coding Is</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 4: WHAT CODING IS
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content3">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-blue">Section 4</div>
+    <h2>What Coding Is</h2>
+    <p>Medical coding is the process of translating clinical documentation into standardized alphanumeric codes. Understanding <em>why</em> this exists — and why precision matters — is foundational to everything else you'll learn.</p>
+    <div class="learn-grid">
+      <div class="learn-item blue"><span class="li-icon">💡</span>What coding means in practice</div>
+      <div class="learn-item blue"><span class="li-icon">📤</span>How documentation becomes a claim</div>
+      <div class="learn-item blue"><span class="li-icon">⚠️</span>Why vague documentation causes problems</div>
+    </div>
+  </div>
+
+  <div class="instr-box">
+    <strong>📌 What to Do</strong>
+    Click through the flow below to see how a patient visit becomes a coded claim. Then answer the questions that follow.
+  </div>
+
+  <!-- Flow Visualization -->
+  <h3 style="margin-bottom:12px">The Coding Flow: Visit → Documentation → Code → Claim</h3>
+  <div id="codingFlow">
+    <div class="card" style="border-left:4px solid var(--blue); cursor:pointer" onclick="showFlowStep(1)">
+      <strong style="color:var(--blue)">Step 1: Patient Visit</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin-top:4px">A patient comes in with a complaint. The provider examines them, makes decisions, and provides services. <em>Click to see what happens next.</em></p>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="card" id="flowStep1" style="display:none; border-left:4px solid var(--teal)">
+      <strong style="color:var(--teal)">Step 2: Provider Documents Everything</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin-top:4px">The provider writes a SOAP note or other clinical documentation. Every detail they document either supports or limits what can be coded. <strong>If it isn't documented, it cannot be coded.</strong></p>
+      <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="showFlowStep(2)">→ What happens to this documentation?</button>
+    </div>
+    <div class="flow-arrow" id="flowArrow2" style="display:none">↓</div>
+    <div class="card" id="flowStep2" style="display:none; border-left:4px solid var(--green)">
+      <strong style="color:var(--green)">Step 3: Coder Reviews Documentation</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin-top:4px">A medical coder reads the documentation and translates it into standardized codes. They use ICD-10-CM for diagnoses, CPT for procedures, and HCPCS Level II for supplies/equipment.</p>
+      <div class="callout-yellow info-callout">⚠️ Coders do not guess. They only code what is documented. Assuming or guessing at diagnoses is a compliance violation.</div>
+      <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="showFlowStep(3)">→ What happens next?</button>
+    </div>
+    <div class="flow-arrow" id="flowArrow3" style="display:none">↓</div>
+    <div class="card" id="flowStep3" style="display:none; border-left:4px solid var(--purple)">
+      <strong style="color:var(--purple)">Step 4: Codes Go on the Claim</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin-top:4px">The codes are placed on a claim form (like a CMS-1500 for outpatient) and submitted to insurance. The insurer uses these codes to determine: Is this covered? How much do we pay?</p>
+      <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="showFlowStep(4)">→ What if something is wrong?</button>
+    </div>
+    <div class="flow-arrow" id="flowArrow4" style="display:none">↓</div>
+    <div class="card" id="flowStep4" style="display:none; border-left:4px solid var(--red)">
+      <strong style="color:var(--red)">Step 5: The Claim is Adjudicated (Paid, Denied, or Audited)</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin-top:4px">If codes are wrong, vague, or unsupported by documentation: the claim may be denied, underpaid, delayed, or flagged for audit. This costs the practice money and the patient confusion.</p>
+      <div class="callout-green info-callout">✅ Accurate, specific coding = clean claims = faster payment.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="margin-bottom:12px">Why Specificity Matters — Two Coders, One Patient</h3>
+  <div class="two-col">
+    <div class="card" style="border-top:4px solid var(--red)">
+      <div style="font-size:0.78rem;font-weight:700;color:var(--red);margin-bottom:8px;text-transform:uppercase">❌ Vague Documentation</div>
+      <div class="note-block" style="font-size:0.8rem">Assessment: leg pain</div>
+      <p style="font-size:0.84rem;color:var(--text2);margin-top:8px">A coder reading this note cannot determine: Which leg? What kind of pain? Is it a muscle, nerve, bone, or joint issue? The coder is stuck. The code assigned will be nonspecific, which may result in claim denial.</p>
+    </div>
+    <div class="card" style="border-top:4px solid var(--green)">
+      <div style="font-size:0.78rem;font-weight:700;color:var(--green);margin-bottom:8px;text-transform:uppercase">✅ Specific Documentation</div>
+      <div class="note-block" style="font-size:0.8rem">Assessment: Acute right calf muscle strain, first episode</div>
+      <p style="font-size:0.84rem;color:var(--text2);margin-top:8px">Now the coder knows: the side (right), the structure (calf muscle), the type (strain), and the episode (first). This maps directly to a specific ICD-10-CM code — a clean, payable claim.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Reasoning Question -->
+  <h3 style="margin-bottom:14px">💭 "What Happens If...?" Reasoning</h3>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">1</span>A coder is reviewing a note. The Assessment section says only: "Abdominal pain." The coder cannot determine the location, severity, or cause from the documentation. What should the coder do?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q4-1','b','Query',this,false,'Coders do not guess diagnoses. Picking the most likely cause without documentation is a compliance violation that can result in fraud.',10)"><span class="opt-mark">A</span>Guess the most likely diagnosis based on the patient's age and history</div>
+      <div class="quiz-option" onclick="ansQuiz('q4-1','b','Query',this,true,'Coders should assign the code that best reflects what IS documented. For unclear cases, many facilities allow a coder query — a formal request asking the provider to clarify the documentation. Coders never assume.',10)"><span class="opt-mark">B</span>Code based on what is documented (nonspecific abdominal pain) and query the provider for clarification if allowed</div>
+      <div class="quiz-option" onclick="ansQuiz('q4-1','b','Query',this,false,'You cannot refuse to process the claim — but you code what is documented, and you do not add information the provider did not write.',10)"><span class="opt-mark">C</span>Refuse to process the claim until the provider adds more detail</div>
+    </div>
+    <div class="feedback-box" id="q4-1"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">2</span>Why do coders use standardized code sets instead of just describing what happened in plain words?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q4-2','c','Standard',this,false,'Codes are a universal language shared across providers, insurers, and governments — not a shortcut to avoid writing.',10)"><span class="opt-mark">A</span>Because it is faster than typing full descriptions</div>
+      <div class="quiz-option" onclick="ansQuiz('q4-2','c','Standard',this,false,'While standardization does reduce some errors, the primary reason is so all parties — across the entire healthcare system — speak the same language.',10)"><span class="opt-mark">B</span>To reduce spelling errors in documentation</div>
+      <div class="quiz-option" onclick="ansQuiz('q4-2','c','Standard',this,true,'Standardized codes create a universal language used across all providers, insurers, and healthcare systems. This allows billing, data collection, public health tracking, and research to function consistently.',10)"><span class="opt-mark">C</span>To create a universal language so all healthcare parties can communicate consistently about services and diagnoses</div>
+    </div>
+    <div class="feedback-box" id="q4-2"></div>
+  </div>
+
+  <div class="mastery-banner" id="mastery4">
+    <h3>🏅 Section 4 Complete!</h3>
+    <p style="color:var(--text2); font-size:0.875rem;">Now that you know what coding is, let's look at exactly how ICD-10-CM codes are built.</p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="showTab(4); scrollToTop();">→ Go to Section 5: ICD-10-CM Structure</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 5: ICD-10-CM STRUCTURE
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content4">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-blue">Section 5</div>
+    <h2>ICD-10-CM Code Structure</h2>
+    <p>Every ICD-10-CM code follows a specific pattern. Understanding the structure of the code is the foundation of everything else in coding. This section breaks it down character by character.</p>
+    <div class="learn-grid">
+      <div class="learn-item blue"><span class="li-icon">🔡</span>What each character position means</div>
+      <div class="learn-item blue"><span class="li-icon">🗂️</span>What the first 3 characters form (the category)</div>
+      <div class="learn-item blue"><span class="li-icon">🎯</span>How additional characters add specificity</div>
+    </div>
+  </div>
+
+  <div class="instr-box">
+    <strong>📌 What to Do</strong>
+    Study the character breakdown below. Click each character position to learn what it represents. Then answer the concept checks.
+  </div>
+
+  <!-- Code Visualizer -->
+  <h3 style="margin-bottom:8px">Breaking Down an ICD-10-CM Code: <code>S52.201A</code></h3>
+  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:16px">This code means: <em>Unspecified fracture of shaft of right ulna, initial encounter for closed fracture</em>. Click each character block to learn what it represents.</p>
+
+  <div class="code-vis-wrapper">
+    <div class="code-vis" id="codeVis">
+      <div class="code-char char-cat1" onclick="showCharInfo(0)" title="Click to learn">S<div class="char-label">Char 1</div></div>
+      <div class="code-char char-cat2" onclick="showCharInfo(1)" title="Click to learn">5<div class="char-label">Char 2</div></div>
+      <div class="code-char char-cat3" onclick="showCharInfo(2)" title="Click to learn">2<div class="char-label">Char 3</div></div>
+      <div class="code-char char-dot" onclick="showCharInfo(3)">&nbsp;.<div class="char-label">Decimal</div></div>
+      <div class="code-char char-spec" onclick="showCharInfo(4)" title="Click to learn">2<div class="char-label">Char 4</div></div>
+      <div class="code-char char-spec" onclick="showCharInfo(5)" title="Click to learn">0<div class="char-label">Char 5</div></div>
+      <div class="code-char char-spec" onclick="showCharInfo(6)" title="Click to learn">1<div class="char-label">Char 6</div></div>
+      <div class="code-char char-spec" onclick="showCharInfo(7)" title="Click to learn">A<div class="char-label">Char 7</div></div>
+    </div>
+  </div>
+  <div id="charInfo" class="info-callout callout-blue" style="display:none; margin-top:8px"></div>
+
+  <div class="divider"></div>
+
+  <h3 style="margin-bottom:12px">The Rules of ICD-10-CM Code Structure</h3>
+  <div class="card-grid">
+    <div class="card" style="border-top:4px solid #3b82f6">
+      <div style="font-size:0.78rem;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:8px">Character 1 — Always a Letter</div>
+      <p style="font-size:0.875rem;color:var(--text2)">The first character is always a letter (A through Z). It identifies the <strong>chapter</strong> of the ICD-10-CM codebook where this code lives.</p>
+      <div class="info-callout callout-blue" style="margin-top:8px; font-size:0.82rem"><strong>Example:</strong> S = Injury codes | E = Endocrine/metabolic | J = Respiratory | M = Musculoskeletal</div>
+    </div>
+    <div class="card" style="border-top:4px solid #60a5fa">
+      <div style="font-size:0.78rem;font-weight:700;color:var(--blue);text-transform:uppercase;margin-bottom:8px">Characters 2–3 — Numbers</div>
+      <p style="font-size:0.875rem;color:var(--text2)">Characters 2 and 3 are usually numbers. Together with Character 1, they complete the <strong>category code</strong> — a 3-character code representing a broad condition.</p>
+      <div class="info-callout callout-blue" style="margin-top:8px; font-size:0.82rem"><strong>S52</strong> = Fracture of forearm (the broad category)</div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--purple)">
+      <div style="font-size:0.78rem;font-weight:700;color:var(--purple);text-transform:uppercase;margin-bottom:8px">Characters 4–7 — Specificity</div>
+      <p style="font-size:0.875rem;color:var(--text2)">Characters after the decimal point (positions 4–7) add clinical detail: which bone, which side, which type of fracture, which encounter, etc.</p>
+      <div class="info-callout callout-purple" style="margin-top:8px; font-size:0.82rem"><strong>.201A</strong> = Shaft of right ulna, unspecified fracture, initial encounter</div>
+    </div>
+  </div>
+
+  <div class="info-callout callout-yellow" style="margin:16px 0">
+    <strong>⚠️ Remember:</strong> The category code (first 3 characters) is the starting point, but it is rarely specific enough for billing. You almost always need to use the most specific code supported by the documentation.
+  </div>
+
+  <!-- Second example -->
+  <h3 style="margin-bottom:8px; margin-top:20px">Another Example: <code>E11.9</code></h3>
+  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:12px">This code means: <em>Type 2 diabetes mellitus without complications</em></p>
+  <div class="code-vis-wrapper">
+    <div class="code-vis">
+      <div class="code-char char-cat1">E<div class="char-label">Char 1</div></div>
+      <div class="code-char char-cat2">1<div class="char-label">Char 2</div></div>
+      <div class="code-char char-cat3">1<div class="char-label">Char 3</div></div>
+      <div class="code-char char-dot">&nbsp;.<div class="char-label">Decimal</div></div>
+      <div class="code-char char-spec">9<div class="char-label">Char 4</div></div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top: 20px">
+    <div class="card">
+      <strong style="color:var(--blue)">E11</strong> = Category code (Type 2 diabetes mellitus)<br>
+      <span style="font-size:0.82rem;color:var(--text2)">This is the 3-character category — all Type 2 diabetes codes start here.</span>
+    </div>
+    <div class="card">
+      <strong style="color:var(--purple)">.9</strong> = Without complications<br>
+      <span style="font-size:0.82rem;color:var(--text2)">The 4th character adds the specificity: no diabetic complications noted in documentation.</span>
+    </div>
+  </div>
+
+  <!-- ICD Quiz -->
+  <div class="divider"></div>
+  <h3 style="margin-bottom:14px">📝 Concept Check — ICD-10-CM Structure</h3>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">1</span>In the ICD-10-CM code <code>J06.9</code>, what is the category code?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q5-1','a','J06',this,true,'The category code is always the first 3 characters: J, 0, 6 = J06 (Acute upper respiratory infections, multiple and unspecified sites). The .9 adds specificity.',10)"><span class="opt-mark">A</span>J06</div>
+      <div class="quiz-option" onclick="ansQuiz('q5-1','a','J06',this,false,'J0 is only 2 characters. The category code requires all 3 characters together.',10)"><span class="opt-mark">B</span>J0</div>
+      <div class="quiz-option" onclick="ansQuiz('q5-1','a','J06',this,false,'J06.9 is the full code, not the category code. The category code is just the first 3 characters.',10)"><span class="opt-mark">C</span>J06.9</div>
+      <div class="quiz-option" onclick="ansQuiz('q5-1','a','J06',this,false,'J is only the first character. The category code requires all 3 characters.',10)"><span class="opt-mark">D</span>J</div>
+    </div>
+    <div class="feedback-box" id="q5-1"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">2</span>What is ALWAYS true about the first character of an ICD-10-CM code?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q5-2','b','Letter',this,false,'The first character is always a letter, not a number. This distinguishes ICD-10-CM from CPT (which uses 5-digit numeric codes).',10)"><span class="opt-mark">A</span>It is always a number</div>
+      <div class="quiz-option" onclick="ansQuiz('q5-2','b','Letter',this,true,'The first character of every ICD-10-CM code is always a letter (A–Z). This is a defining feature of the ICD-10-CM structure.',10)"><span class="opt-mark">B</span>It is always a letter</div>
+      <div class="quiz-option" onclick="ansQuiz('q5-2','b','Letter',this,false,'The first character follows a strict pattern — it is always a letter.',10)"><span class="opt-mark">C</span>It can be either a letter or a number depending on the condition</div>
+    </div>
+    <div class="feedback-box" id="q5-2"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">3</span>A provider documents "fracture of the wrist" without specifying which bone, which side, or whether it is open or closed. Why is this a problem for the coder?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q5-3','c','Spec',this,false,'A coder cannot add information the provider didn\'t document. The code assigned will be unspecified, which is less accurate and may cause claim issues.',10)"><span class="opt-mark">A</span>It isn't a problem — the coder can fill in the missing details</div>
+      <div class="quiz-option" onclick="ansQuiz('q5-3','c','Spec',this,false,'The code for "fracture of wrist" still exists, but it will be a very nonspecific code. More specific documentation leads to more specific (and billable) codes.',10)"><span class="opt-mark">B</span>There is no ICD-10-CM code for wrist fractures without specifics</div>
+      <div class="quiz-option" onclick="ansQuiz('q5-3','c','Spec',this,true,'ICD-10-CM codes are built for specificity. Without details like side (laterality), bone, and fracture type, the coder must use a less specific code. This can result in claim denial or audit flags — because insurers expect the most specific code supported by documentation.',10)"><span class="opt-mark">C</span>ICD-10-CM requires specificity — the coder must code only what is documented, which may result in a nonspecific code that could be denied or questioned</div>
+    </div>
+    <div class="feedback-box" id="q5-3"></div>
+  </div>
+
+  <div class="mastery-banner" id="mastery5">
+    <h3>🏅 Section 5 Complete!</h3>
+    <p style="color:var(--text2); font-size:0.875rem;">You understand ICD-10-CM structure. Now practice identifying category codes and specificity.</p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="showTab(5); scrollToTop();">→ Go to Section 6: Category &amp; Specificity</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 6: CATEGORY & SPECIFICITY
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content5">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-blue">Section 6</div>
+    <h2>Category Code &amp; Specificity Builder</h2>
+    <p>Now that you know the structure of ICD-10-CM codes, let's practice distinguishing broader category codes from more specific codes — and understanding what added detail means clinically.</p>
+    <div class="learn-grid">
+      <div class="learn-item blue"><span class="li-icon">🗂️</span>Identify category codes from full codes</div>
+      <div class="learn-item blue"><span class="li-icon">🔍</span>Recognize which code is more specific</div>
+      <div class="learn-item blue"><span class="li-icon">🔄</span>Understand what changed between broader and specific codes</div>
+    </div>
+  </div>
+
+  <div class="instr-box">
+    <strong>📌 What to Do</strong>
+    For each activity, click your answer. You'll see rationale explaining exactly why one code is more specific than another.
+  </div>
+
+  <h3 style="margin-bottom:14px">Activity 1: Click the Category Code</h3>
+  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:12px">For each set, identify which option is the <strong>category code</strong> (the first 3 characters only).</p>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">1</span>Which of these is the category code for pneumonia?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q6-1','b','J18',this,false,'J18.1 is a more specific code (lobar pneumonia, unspecified organism). The category code is just the first 3 characters.',10)"><span class="opt-mark">A</span><code>J18.1</code></div>
+      <div class="quiz-option" onclick="ansQuiz('q6-1','b','J18',this,true,'J18 is the 3-character category code for "Pneumonia, unspecified organism." All more specific pneumonia codes in this category begin with J18.',10)"><span class="opt-mark">B</span><code>J18</code></div>
+      <div class="quiz-option" onclick="ansQuiz('q6-1','b','J18',this,false,'J1 is only 2 characters — not a complete category code.',10)"><span class="opt-mark">C</span><code>J1</code></div>
+    </div>
+    <div class="feedback-box" id="q6-1"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">2</span>A coder is working with code <code>M54.51</code> (Vertebrogenic low back pain). What is the category code?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q6-2','b','M54',this,false,'M5 is only 2 characters. Category codes always have 3 characters.',10)"><span class="opt-mark">A</span>M5</div>
+      <div class="quiz-option" onclick="ansQuiz('q6-2','b','M54',this,true,'M54 is the 3-character category code for "Dorsalgia" (back pain). The .51 adds specificity: vertebrogenic as the cause.',10)"><span class="opt-mark">B</span>M54</div>
+      <div class="quiz-option" onclick="ansQuiz('q6-2','b','M54',this,false,'M54.5 is a 4-character code (5 with the decimal). The category is the first 3 characters only.',10)"><span class="opt-mark">C</span>M54.5</div>
+    </div>
+    <div class="feedback-box" id="q6-2"></div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="margin-bottom:14px">Activity 2: Which Code is More Specific?</h3>
+  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:12px">Select the more specific code and explain <em>what</em> made it more specific.</p>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">3</span>A patient has a fracture. Compare these two codes. Which is more specific?<br><span style="font-size:0.82rem;color:var(--text3);display:block;margin-top:4px">A: <code>S52.2</code> (Fracture of shaft of ulna) &nbsp;&nbsp; B: <code>S52.201A</code> (Unspecified fracture of shaft of right ulna, initial encounter)</span></div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q6-3','b','S52.201A',this,false,'S52.2 is broader — it only tells us fracture of shaft of ulna. It doesn\'t specify side or encounter type.',10)"><span class="opt-mark">A</span><code>S52.2</code> — it\'s shorter and simpler</div>
+      <div class="quiz-option" onclick="ansQuiz('q6-3','b','S52.201A',this,true,'S52.201A is far more specific. The added characters tell us: which ulna (right), which encounter (A = initial), and the fracture type. Each additional character answers a clinical question.',10)"><span class="opt-mark">B</span><code>S52.201A</code> — it adds laterality, encounter type, and fracture detail</div>
+    </div>
+    <div class="feedback-box" id="q6-3"></div>
+  </div>
+
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">4</span>Compare: <code>E11</code> vs <code>E11.65</code>. What did the extra characters add in E11.65?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="ansQuiz('q6-4','c','Complication',this,false,'E11 is already specific to Type 2 diabetes. E11.65 adds a specific complication (hyperglycemia), not a different type of diabetes.',10)"><span class="opt-mark">A</span>They changed the type of diabetes to Type 1</div>
+      <div class="quiz-option" onclick="ansQuiz('q6-4','c','Complication',this,false,'The patient age isn\'t encoded in ICD-10-CM codes.',10)"><span class="opt-mark">B</span>They indicated the patient\'s age</div>
+      <div class="quiz-option" onclick="ansQuiz('q6-4','c','Complication',this,true,'E11.65 = Type 2 diabetes mellitus with hyperglycemia. The .65 specifies the complication: hyperglycemia. E11 alone only says "Type 2 diabetes." The extra characters identify what complication is present.',10)"><span class="opt-mark">C</span>They specified a complication — hyperglycemia — that goes beyond just saying "Type 2 diabetes"</div>
+    </div>
+    <div class="feedback-box" id="q6-4"></div>
+  </div>
+
+  <div class="divider"></div>
+  <h3 style="margin-bottom:12px">Activity 3: "What Changed?" — Code Comparisons</h3>
+  <p style="font-size:0.875rem;color:var(--text2);margin-bottom:12px">Study each pair and click what specifically changed from the left code to the right code.</p>
+
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+      <div style="text-align:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--blue)">J06.9</div>
+        <div style="font-size:0.75rem;color:var(--text3)">Acute upper respiratory infection, unspecified</div>
+      </div>
+      <div style="font-size:1.5rem;color:var(--text3)">→</div>
+      <div style="text-align:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--purple)">J02.0</div>
+        <div style="font-size:0.75rem;color:var(--text3)">Streptococcal pharyngitis</div>
+      </div>
+    </div>
+    <p style="font-size:0.875rem;margin-bottom:8px">What specifically improved from J06.9 to J02.0?</p>
+    <div class="btn-group">
+      <button class="btn btn-outline btn-sm" onclick="checkChange('c1','organ','The category changed too — J06 is general upper respiratory, J02 is specifically throat/pharynx.')">The organ/site became more specific (pharynx)</button>
+      <button class="btn btn-outline btn-sm" onclick="checkChange('c1','cause','✅ Correct! J02.0 specifies the cause — streptococcal bacteria — which was unknown in J06.9. The causative organism was identified.')">The causative organism was identified</button>
+      <button class="btn btn-outline btn-sm" onclick="checkChange('c1','side','Side/laterality doesn\'t apply to pharyngitis. What changed was the identified cause of the infection.')">Laterality (which side)</button>
+    </div>
+    <div class="feedback-box" id="c1"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:12px">
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+      <div style="text-align:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--blue)">S62.001A</div>
+        <div style="font-size:0.75rem;color:var(--text3)">Fracture of scaphoid bone, unspecified, initial encounter</div>
+      </div>
+      <div style="font-size:1.5rem;color:var(--text3)">→</div>
+      <div style="text-align:center">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--purple)">S62.011A</div>
+        <div style="font-size:0.75rem;color:var(--text3)">Fracture of distal pole of navicular bone of right wrist, initial encounter</div>
+      </div>
+    </div>
+    <p style="font-size:0.875rem;margin-bottom:8px">What specifically improved?</p>
+    <div class="btn-group">
+      <button class="btn btn-outline btn-sm" onclick="checkChange('c2','loc','✅ Correct! S62.011A specifies both the exact location on the bone (distal pole) AND the laterality (right wrist). These are two levels of added specificity.')">The exact location on the bone AND the laterality</button>
+      <button class="btn btn-outline btn-sm" onclick="checkChange('c2','enc','The encounter type (A = initial encounter) is the same in both codes. What changed was location and side.')">The encounter type changed</button>
+      <button class="btn btn-outline btn-sm" onclick="checkChange('c2','cause','The cause of the fracture wasn\'t changed — the specificity added was anatomical location and laterality.')">The cause of injury</button>
+    </div>
+    <div class="feedback-box" id="c2"></div>
+  </div>
+
+  <div class="mastery-banner" id="mastery6">
+    <h3>🏅 Section 6 Complete!</h3>
+    <p style="color:var(--text2); font-size:0.875rem;">Excellent work. Now let's put it all together in a guided code-finding simulation.</p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="showTab(6); scrollToTop();">→ Go to Section 7: Code-Finding Simulation</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 7: CODE-FINDING SIMULATION
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content6">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-purple">Section 7 — Simulation</div>
+    <h2>Guided Code-Finding Simulation</h2>
+    <p>This simulation walks you through a structured approach to finding an ICD-10-CM code. You'll follow five steps — the same logic a real coder uses — and make decisions along the way.</p>
+    <div class="learn-grid">
+      <div class="learn-item purple"><span class="li-icon">🧭</span>The 5-step code-finding process</div>
+      <div class="learn-item purple"><span class="li-icon">🤔</span>How to think through clinical documentation</div>
+      <div class="learn-item purple"><span class="li-icon">🎯</span>How to compare and select the best code</div>
+    </div>
+  </div>
+
+  <div class="instr-box">
+    <strong>📌 What to Do</strong>
+    Read the patient scenario. Then follow the 5-step prompts. Click "Open Next Step" to advance. Each step guides your thinking with hints and rationale.
+  </div>
+
+  <!-- Scenario -->
+  <div class="scenario-card" style="border:2px solid var(--purple-mid); background: var(--purple-light)">
+    <div class="scenario-label" style="color:var(--purple)">📋 Patient Scenario</div>
+    <p style="font-weight:600; margin-bottom:8px; font-size:0.95rem">Provider note excerpt:</p>
+    <div class="note-block">Assessment: Patient presents with acute bronchitis. Productive cough x 7 days. No fever. No history of COPD or asthma.
+
+Plan: Symptomatic treatment. Recommend increased fluids and rest. Follow up in 1 week if not improving.</div>
+    <p style="font-size:0.82rem;color:var(--text2);margin-top:6px"><strong>Your task:</strong> Find the best ICD-10-CM code to report this diagnosis.</p>
+  </div>
+
+  <!-- Step Indicator -->
+  <div class="sim-step-indicator" id="simIndicator">
+    <div class="sim-dot active" id="sdot0">1</div>
+    <div class="sim-dot" id="sdot1">2</div>
+    <div class="sim-dot" id="sdot2">3</div>
+    <div class="sim-dot" id="sdot3">4</div>
+    <div class="sim-dot" id="sdot4">5</div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="sim-step active" id="simStep0">
+    <div class="card" style="border-left:4px solid var(--blue)">
+      <strong style="color:var(--blue)">Step 1: Identify the Diagnosis or Condition</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin:8px 0">Look at the Assessment section of the SOAP note. What diagnosis did the provider document?</p>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(0,'wrong','Productive cough is a symptom — it is in the note, but the provider\'s formal diagnosis is in the Assessment. Coders code the diagnosis, not symptoms when a diagnosis is available.')">Productive cough</button>
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(0,'correct','✅ Correct! The Assessment clearly states: Acute bronchitis. This is the diagnosis you will code. The cough is a symptom, but the diagnosis is acute bronchitis.')">Acute bronchitis</button>
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(0,'wrong','The provider documented NO history of COPD. You code only what IS documented. You cannot add COPD just because bronchitis is present.')">COPD</button>
+      </div>
+      <div class="feedback-box" id="sim0"></div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="sim-step" id="simStep1">
+    <div class="card" style="border-left:4px solid var(--teal)">
+      <strong style="color:var(--teal)">Step 2: Which Code Set Do You Need?</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin:8px 0">You have identified a diagnosis: acute bronchitis. Which code set reports diagnoses?</p>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(1,'wrong','CPT reports procedures and services — not diagnoses.')">CPT</button>
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(1,'wrong','HCPCS Level II reports supplies and equipment — not diagnoses.')">HCPCS Level II</button>
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(1,'correct','✅ Correct! Diagnoses are always reported with ICD-10-CM. You are looking for an ICD-10-CM code for acute bronchitis.')">ICD-10-CM</button>
+      </div>
+      <div class="feedback-box" id="sim1"></div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="sim-step" id="simStep2">
+    <div class="card" style="border-left:4px solid var(--green)">
+      <strong style="color:var(--green)">Step 3: Find the Broad Category</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin:8px 0">In ICD-10-CM, "Acute bronchitis" falls under chapter J (Respiratory system). The category code for acute bronchitis is <code>J20</code>. What does this category code tell you?</p>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(2,'wrong','J20 is specific to acute bronchitis. Chronic bronchitis has its own category (J42).')">It covers all bronchitis, acute and chronic</button>
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(2,'correct','✅ Correct! J20 is the category code for Acute Bronchitis only. Within J20, the subcategory codes (J20.0 through J20.9) identify the causative organism or unspecified cause.')">It is the 3-character starting point for acute bronchitis only</button>
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(2,'wrong','J20 is the category for acute bronchitis. All J20.x codes are about bronchitis — not all respiratory conditions.')">It covers all respiratory conditions starting with J</button>
+      </div>
+      <div class="feedback-box" id="sim2"></div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="sim-step" id="simStep3">
+    <div class="card" style="border-left:4px solid var(--yellow)">
+      <strong style="color:var(--yellow)">Step 4: Compare More Detailed Code Options</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin:8px 0">Within J20, several codes exist. Review these options and think about which the documentation supports:</p>
+      <div style="overflow-x:auto;margin:10px 0">
+      <table class="comp-table" style="font-size:0.82rem">
+        <thead><tr><th style="background:var(--blue);color:white">Code</th><th style="background:var(--blue);color:white">Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>J20.0</code></td><td>Acute bronchitis due to Mycoplasma pneumoniae</td></tr>
+          <tr><td><code>J20.1</code></td><td>Acute bronchitis due to Haemophilus influenzae</td></tr>
+          <tr><td><code>J20.2</code></td><td>Acute bronchitis due to streptococcus</td></tr>
+          <tr style="background:var(--green-light)"><td><code>J20.9</code></td><td>Acute bronchitis, unspecified</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p style="font-size:0.875rem;color:var(--text2)">The note says "Acute bronchitis" — no organism identified. Which code fits best?</p>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(3,'wrong','J20.0 requires documented Mycoplasma. There is no organism identified in the note.')">J20.0 — Mycoplasma was probably involved</button>
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(3,'correct','✅ Exactly right. The documentation says only "acute bronchitis" with no causative organism identified. J20.9 (unspecified) is the accurate code — not a guess.')">J20.9 — the note doesn\'t specify an organism</button>
+        <button class="btn btn-outline btn-sm" onclick="simAnswer(3,'wrong','We don\'t have enough documentation to assume streptococcus. Coding is based on what is documented.')">J20.2 — streptococcus is very common</button>
+      </div>
+      <div class="feedback-box" id="sim3"></div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="sim-step" id="simStep4">
+    <div class="card" style="border-left:4px solid var(--purple)">
+      <strong style="color:var(--purple)">Step 5: Confirm Your Code Selection</strong>
+      <p style="font-size:0.875rem;color:var(--text2);margin:8px 0">You have selected <code>J20.9</code> — Acute bronchitis, unspecified. Before finalizing, ask yourself these questions:</p>
+      <div class="info-callout callout-blue" style="margin:10px 0; font-size:0.85rem">
+        ✅ Does this match the provider's documented diagnosis? <strong>Yes — "Acute bronchitis"</strong><br>
+        ✅ Is there additional detail in the note I haven't used? <strong>No organism specified. Productive cough is a symptom, not a separate diagnosis here.</strong><br>
+        ✅ Is there a more specific code supported by documentation? <strong>No — unspecified is appropriate here.</strong><br>
+        ✅ Did I code from the Assessment, not just the symptoms? <strong>Yes.</strong>
+      </div>
+      <div class="info-callout callout-green" style="font-size:0.85rem; font-weight:600">
+        🎯 Final code: J20.9 — Acute bronchitis, unspecified ✓
+      </div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-top:10px">Productive cough is a symptom of the bronchitis. Since the diagnosis was documented, you do NOT code the symptom separately.</p>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="completeSim()">✅ I understand — complete simulation</button>
+    </div>
+  </div>
+
+  <div class="mastery-banner" id="mastery7">
+    <h3>🏅 Simulation Complete! You earned 50 points.</h3>
+    <p style="color:var(--text2); font-size:0.875rem;">You navigated the full code-finding process. Head to the Practice Arena to apply all your skills.</p>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="showTab(7); scrollToTop();">→ Go to Section 8: Practice Arena</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 8: PRACTICE ARENA
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content7">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-green">Section 8 — Practice</div>
+    <h2>Practice Arena</h2>
+    <p>Apply everything you've learned. Mixed activities covering all concepts — code sets, SOAP, ICD-10-CM structure, category codes, and specificity. Every answer gives feedback.</p>
+    <div class="learn-grid">
+      <div class="learn-item green"><span class="li-icon">🏋️</span>Apply all concepts from Sections 2–7</div>
+      <div class="learn-item green"><span class="li-icon">🔄</span>Mixed formats: multiple choice, scenarios, click-to-identify</div>
+      <div class="learn-item green"><span class="li-icon">⭐</span>Earn points for each correct answer</div>
+    </div>
+  </div>
+
+  <div class="section-progress">
+    <span>Practice score:</span>
+    <div class="section-prog-bar"><div class="section-prog-fill" id="arenaProg" style="width:0%"></div></div>
+    <span id="arenaScore">0 / 100</span>
+  </div>
+
+  <div class="instr-box">
+    <strong>📌 What to Do</strong>
+    Answer all questions below. After each answer, read the rationale — it reinforces your understanding. You can retry any question.
+  </div>
+
+  <!-- Arena Q1 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">1</span><strong>Which Code Set?</strong> — A patient receives an ambulance transport to the emergency room. Which code set reports the ambulance service?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a1','A','HCPCS',this)"><span class="opt-mark">A</span>CPT</div>
+      <div class="quiz-option" onclick="arenaAns('a1','B','HCPCS',this)"><span class="opt-mark">B</span>HCPCS Level II — ambulance is a non-CPT service</div>
+      <div class="quiz-option" onclick="arenaAns('a1','C','HCPCS',this)"><span class="opt-mark">C</span>ICD-10-CM</div>
+    </div>
+    <div class="feedback-box" id="a1"></div>
+  </div>
+
+  <!-- Arena Q2 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">2</span><strong>SOAP Sort</strong> — "Lungs clear to auscultation. No wheezing or crackles. SpO2 97% on room air." Which SOAP section is this?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a2','B','O',this)"><span class="opt-mark">A</span>S — Subjective</div>
+      <div class="quiz-option" onclick="arenaAns('a2','B','O',this)"><span class="opt-mark">B</span>O — Objective (provider's physical findings and measurements)</div>
+      <div class="quiz-option" onclick="arenaAns('a2','C','O',this)"><span class="opt-mark">C</span>A — Assessment</div>
+    </div>
+    <div class="feedback-box" id="a2"></div>
+  </div>
+
+  <!-- Arena Q3 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">3</span><strong>Category Code</strong> — The full ICD-10-CM code is <code>K21.0</code> (Gastro-esophageal reflux disease with esophagitis). What is the category code?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a3','A','K21',this)"><span class="opt-mark">A</span>K21</div>
+      <div class="quiz-option" onclick="arenaAns('a3','B','K21',this)"><span class="opt-mark">B</span>K21.0</div>
+      <div class="quiz-option" onclick="arenaAns('a3','C','K21',this)"><span class="opt-mark">C</span>K2</div>
+    </div>
+    <div class="feedback-box" id="a3"></div>
+  </div>
+
+  <!-- Arena Q4 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">4</span><strong>Specificity</strong> — A provider documents "hypertension." Which code is most appropriate if documentation says only "hypertension" with no other qualifiers?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a4','A','I10',this)"><span class="opt-mark">A</span>I10 — Essential (primary) hypertension</div>
+      <div class="quiz-option" onclick="arenaAns('a4','B','I10',this)"><span class="opt-mark">B</span>I13.10 — Hypertensive heart and chronic kidney disease without heart failure</div>
+      <div class="quiz-option" onclick="arenaAns('a4','C','I10',this)"><span class="opt-mark">C</span>I12.9 — Hypertensive chronic kidney disease with stage 1-4</div>
+    </div>
+    <div class="feedback-box" id="a4"></div>
+  </div>
+
+  <!-- Arena Q5 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">5</span><strong>Documentation Matters</strong> — A provider writes "diabetes mellitus" without specifying Type 1 or Type 2. Which of the following is true about coding this?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a5','A','E11.9',this)"><span class="opt-mark">A</span>Per ICD-10-CM guidelines, when the type is not documented, Type 2 is the default — code E11.9</div>
+      <div class="quiz-option" onclick="arenaAns('a5','B','E11.9',this)"><span class="opt-mark">B</span>You should guess the type based on the patient's weight and age</div>
+      <div class="quiz-option" onclick="arenaAns('a5','C','E11.9',this)"><span class="opt-mark">C</span>You cannot code diabetes without knowing the type — leave it blank</div>
+    </div>
+    <div class="feedback-box" id="a5"></div>
+  </div>
+
+  <!-- Arena Q6 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">6</span><strong>SOAP + Coding Logic</strong> — A coder is about to choose a diagnosis code. They should primarily look at which SOAP section?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a6','A','A',this)"><span class="opt-mark">A</span>A — Assessment (the provider's documented diagnosis)</div>
+      <div class="quiz-option" onclick="arenaAns('a6','B','A',this)"><span class="opt-mark">B</span>S — Subjective (the patient's complaint)</div>
+      <div class="quiz-option" onclick="arenaAns('a6','C','A',this)"><span class="opt-mark">C</span>P — Plan (what was ordered)</div>
+    </div>
+    <div class="feedback-box" id="a6"></div>
+  </div>
+
+  <!-- Arena Q7 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">7</span><strong>Code Structure</strong> — Which of the following is a validly structured ICD-10-CM code?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a7','A','M54.5',this)"><span class="opt-mark">A</span>M54.5 (starts with letter, then numbers, then decimal and specificity)</div>
+      <div class="quiz-option" onclick="arenaAns('a7','B','M54.5',this)"><span class="opt-mark">B</span>54.M5 (numbers before letter)</div>
+      <div class="quiz-option" onclick="arenaAns('a7','C','M54.5',this)"><span class="opt-mark">C</span>99213 (5 all-numeric digits — this is a CPT code)</div>
+    </div>
+    <div class="feedback-box" id="a7"></div>
+  </div>
+
+  <!-- Arena Q8 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">8</span><strong>Scenario</strong> — Read this SOAP note excerpt:<br><span style="font-size:0.85rem;font-style:italic">"Plan: Refer to ophthalmology. Order A1C and fasting glucose. Prescribe metformin 500mg BID."</span><br>Which code set would you look to for the SERVICES the provider ordered (the referral and lab)?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a8','A','CPT',this)"><span class="opt-mark">A</span>CPT — procedures and services ordered are coded with CPT</div>
+      <div class="quiz-option" onclick="arenaAns('a8','B','CPT',this)"><span class="opt-mark">B</span>ICD-10-CM — this is the diagnosis section</div>
+      <div class="quiz-option" onclick="arenaAns('a8','C','CPT',this)"><span class="opt-mark">C</span>HCPCS Level II — metformin is a medication</div>
+    </div>
+    <div class="feedback-box" id="a8"></div>
+  </div>
+
+  <!-- Arena Q9 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">9</span><strong>Wider Application</strong> — A patient has a wellness visit with no illness. The provider documents the visit as a routine adult health exam. What code set reports this service?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a9','A','CPT',this)"><span class="opt-mark">A</span>CPT — a wellness visit is a service provided by the provider</div>
+      <div class="quiz-option" onclick="arenaAns('a9','B','CPT',this)"><span class="opt-mark">B</span>ICD-10-CM — wellness visits are diagnoses</div>
+      <div class="quiz-option" onclick="arenaAns('a9','C','CPT',this)"><span class="opt-mark">C</span>Neither — wellness visits cannot be coded</div>
+    </div>
+    <div class="feedback-box" id="a9"></div>
+  </div>
+
+  <!-- Arena Q10 -->
+  <div class="quiz-block">
+    <div class="quiz-q"><span class="quiz-num">10</span><strong>Final Challenge</strong> — Which of the following best describes what a coder DOES?</div>
+    <div class="quiz-options">
+      <div class="quiz-option" onclick="arenaAns('a10','A','Translate',this)"><span class="opt-mark">A</span>Reads clinical documentation and translates it into accurate, standardized codes that support a clean claim</div>
+      <div class="quiz-option" onclick="arenaAns('a10','B','Translate',this)"><span class="opt-mark">B</span>Makes medical decisions and fills in documentation gaps for the provider</div>
+      <div class="quiz-option" onclick="arenaAns('a10','C','Translate',this)"><span class="opt-mark">C</span>Decides which services should be billed based on what insurance will pay</div>
+    </div>
+    <div class="feedback-box" id="a10"></div>
+  </div>
+
+  <div class="mastery-banner" id="mastery8">
+    <h3>🏅 Practice Arena Complete!</h3>
+    <p style="color:var(--text2); font-size:0.875rem;">Ready for a real test? Try the Timed Challenge!</p>
+    <button class="btn btn-purple" style="margin-top:10px" onclick="showTab(8); scrollToTop();">→ Go to Section 9: Timed Challenge</button>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 9: TIMED CHALLENGE
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content8">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-purple">Section 9 — Challenge</div>
+    <h2>Timed Challenge</h2>
+    <p>Put your knowledge to the test with a timed quiz. 15 questions. 60 seconds each. Mixed topics. Track your score and review anything you miss.</p>
+  </div>
+
+  <!-- Pre-start screen -->
+  <div id="challengeStart" style="text-align:center; padding:40px 20px">
+    <div style="font-size:3rem; margin-bottom:12px">⏱️</div>
+    <h3 style="font-size:1.4rem; margin-bottom:8px">Ready for the Challenge?</h3>
+    <p style="color:var(--text2); margin-bottom:20px; font-size:0.9rem">15 questions · 60 seconds each · Mixed topics<br>Score is tracked. Missed questions reviewed at the end.</p>
+    <button class="btn btn-purple" onclick="startChallenge()">🚀 Start Timed Challenge</button>
+  </div>
+
+  <!-- Challenge game -->
+  <div id="challengeGame" style="display:none">
+    <div class="challenge-header">
+      <div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text3);text-transform:uppercase">Question</div>
+        <div style="font-weight:700" id="challengeQNum">1 / 15</div>
+      </div>
+      <div class="timer-ring" id="timerRing">
+        <span id="timerDisplay">60</span>
+      </div>
+      <div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text3);text-transform:uppercase">Score</div>
+        <div class="challenge-score-display" id="challengeScore">0</div>
+      </div>
+    </div>
+    <div style="height:6px;background:var(--border);border-radius:999px;margin-bottom:20px;overflow:hidden">
+      <div id="challengeQProg" style="height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width 0.3s;width:0%"></div>
+    </div>
+    <div id="challengeQArea" class="quiz-block"></div>
+  </div>
+
+  <!-- Results -->
+  <div id="challengeResults" style="display:none">
+    <div class="score-summary">
+      <div style="font-size:0.9rem;color:var(--text2);margin-bottom:4px">Final Score</div>
+      <div class="score-big" id="finalScore">0</div>
+      <div style="font-size:0.875rem;color:var(--text2)" id="finalOutOf"></div>
+      <div class="score-grade" id="finalGrade"></div>
+    </div>
+    <div class="btn-group" style="justify-content:center; margin-bottom:20px">
+      <button class="btn btn-purple" onclick="startChallenge()">↺ Try Again</button>
+      <button class="btn btn-outline" onclick="showTab(9); scrollToTop()">📋 Rapid Review</button>
+    </div>
+    <div id="missedSection" style="display:none">
+      <h3 style="margin-bottom:12px">📖 Review Missed Questions</h3>
+      <div id="missedList"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TAB 10: RAPID REVIEW
+═══════════════════════════════════════════ -->
+<div class="tab-content" id="content9">
+<div class="page">
+
+  <div class="section-header">
+    <div class="section-tag tag-green">Section 10 — Review</div>
+    <h2>Rapid Review</h2>
+    <p>A quick-reference summary of everything covered in this lab. Use this to review before a test or after you finish a section.</p>
+  </div>
+
+  <div class="instr-box">
+    <strong>📌 How to use this section</strong>
+    Read through each card. Click any accordion to expand the details. The "If you see this, think this" section is especially useful for quick recall.
+  </div>
+
+  <div class="review-card">
+    <div class="review-card-header" style="background:#3b82f6;color:white">📚 The 3 Code Sets — Quick Reference</div>
+    <div class="review-card-body">
+      <strong style="color:#3b82f6">CPT</strong> — Reports procedures and services. 5-digit numeric codes. Published by AMA. Ask: <em>"What did the provider DO?"</em><br>
+      <strong style="color:#22c55e">HCPCS Level II</strong> — Reports supplies, DME, equipment, injectable drugs, ambulance. 1 letter + 4 numbers. Published by CMS. Ask: <em>"What was SUPPLIED?"</em><br>
+      <strong style="color:#a855f7">ICD-10-CM</strong> — Reports diagnoses and conditions. Starts with a letter. Published by WHO/CMS. Ask: <em>"WHY did the patient come in?"</em>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-card-header" style="background:#6366f1;color:white">📋 SOAP Notes — Definitions</div>
+    <div class="review-card-body">
+      <strong>S — Subjective:</strong> What the patient says. Complaints, symptoms, history in the patient's own words.<br>
+      <strong>O — Objective:</strong> What the provider observes and measures. Vital signs, physical exam, lab results.<br>
+      <strong>A — Assessment:</strong> The provider's diagnosis or clinical impression. <strong>This is where ICD-10-CM codes come from.</strong><br>
+      <strong>P — Plan:</strong> What the provider orders. Prescriptions, referrals, tests, follow-up. <strong>CPT codes often come from here.</strong>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-card-header" style="background:#0891b2;color:white">🔡 ICD-10-CM Code Structure</div>
+    <div class="review-card-body">
+      <strong>Character 1:</strong> Always a letter (A–Z). Identifies the chapter/body system.<br>
+      <strong>Characters 1–3:</strong> Together = the <strong>category code</strong>. Broad condition grouping.<br>
+      <strong>Characters 4–7 (after decimal):</strong> Add specificity — site, side, type, encounter.<br>
+      <strong>Rule:</strong> Always use the most specific code supported by documentation.
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-card-header" style="background:#16a34a;color:white">🎯 Category Codes &amp; Specificity</div>
+    <div class="review-card-body">
+      A <strong>category code</strong> = exactly 3 characters (e.g., <code>J18</code>, <code>E11</code>, <code>M54</code>)<br>
+      More characters = more specific = better documentation support<br>
+      <code>E11</code> = Type 2 diabetes (broad category)<br>
+      <code>E11.65</code> = Type 2 diabetes WITH hyperglycemia (specific complication added)<br>
+      <strong>Specificity comes from documentation — not guesswork.</strong>
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-card-header" style="background:#dc2626;color:white">⚠️ Common Mistakes to Avoid</div>
+    <div class="review-card-body">
+      ❌ Using CPT to report a diagnosis (CPT = procedures only)<br>
+      ❌ Using ICD-10-CM to report a service (ICD-10-CM = diagnoses only)<br>
+      ❌ Coding a symptom instead of the diagnosis when the diagnosis IS documented<br>
+      ❌ Guessing the causative organism when none is documented<br>
+      ❌ Using a category code when a more specific code is available and documented<br>
+      ❌ Adding information the provider did not document
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-card-header" style="background:#7c3aed;color:white">⚡ If You See This, Think This</div>
+    <div class="review-card-body">
+      <strong>"What did the provider do?"</strong> → CPT<br>
+      <strong>"What diagnosis was documented?"</strong> → ICD-10-CM<br>
+      <strong>"DME, walker, wheelchair, ambulance"</strong> → HCPCS Level II<br>
+      <strong>"Patient says, patient reports, patient denies"</strong> → Subjective (S)<br>
+      <strong>"BP, temp, exam findings, lab values"</strong> → Objective (O)<br>
+      <strong>"Diagnosis, impression, assessment"</strong> → Assessment (A) → ICD-10-CM<br>
+      <strong>"Prescribe, refer, order, follow up"</strong> → Plan (P) → CPT/HCPCS<br>
+      <strong>"First 3 characters of ICD-10-CM code"</strong> → Category code<br>
+      <strong>"More characters = ?"</strong> → More specificity<br>
+      <strong>"Documentation is vague"</strong> → Code what IS documented; do not guess
+    </div>
+  </div>
+
+  <div class="review-card">
+    <div class="review-card-header" style="background:#ca8a04;color:white">💡 Coding Fundamentals — 5 Rules</div>
+    <div class="review-card-body">
+      <strong>1.</strong> Code only what is documented.<br>
+      <strong>2.</strong> Use the most specific code supported by the documentation.<br>
+      <strong>3.</strong> Don't code a symptom if the diagnosis is documented.<br>
+      <strong>4.</strong> ICD-10-CM is used on almost every claim — it explains WHY services were provided.<br>
+      <strong>5.</strong> If the documentation is unclear, query the provider — do not assume.
+    </div>
+  </div>
+
+  <div style="margin-top:24px; text-align:center">
+    <button class="btn btn-primary" onclick="showTab(8); scrollToTop()">⏱️ Try the Timed Challenge</button>
+    <button class="btn btn-outline" style="margin-left:8px" onclick="showTab(0); scrollToTop()">↩ Back to Welcome</button>
+  </div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>Designed and Curriculum Developed by Hilary Homaii</span> · Medical Billing &amp; Coding Foundations Interactive Lab
+</footer>
+
+<script>
+// ─── GLOBAL STATE ───────────────────────────────────────────────
+let totalScore = 0;
+let sectionsDone = new Set();
+let answeredQuizzes = new Set();
+let arenaAnswered = 0, arenaCorrect = 0;
+let dragSource = null;
+
+function addScore(pts) {
+  totalScore += pts;
+  document.getElementById('totalScore').textContent = totalScore;
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.min(100, (totalScore / 300) * 100);
+  document.getElementById('globalProgress').style.width = pct + '%';
+}
+
+function scrollToTop() { window.scrollTo({top:0, behavior:'smooth'}); }
+
+// ─── TAB NAVIGATION ─────────────────────────────────────────────
+function showTab(idx) {
+  document.querySelectorAll('.tab-content').forEach((el,i) => el.classList.toggle('active', i===idx));
+  document.querySelectorAll('.nav-tab').forEach((el,i) => el.classList.toggle('active', i===idx));
+  scrollToTop();
+}
+
+// ─── QUIZ ENGINE ─────────────────────────────────────────────────
+function ansQuiz(feedbackId, correctKey, correctLabel, el, isCorrect, rationale, pts) {
+  if(answeredQuizzes.has(feedbackId)) return;
+  answeredQuizzes.add(feedbackId);
+  const fb = document.getElementById(feedbackId);
+  const parent = el.closest('.quiz-options');
+  parent.querySelectorAll('.quiz-option').forEach(o => o.classList.add('disabled'));
+  if(isCorrect) {
+    el.classList.add('correct');
+    el.querySelector('.opt-mark').textContent = '✓';
+    addScore(pts);
+    fb.className = 'feedback-box show feedback-correct';
+    fb.innerHTML = `<strong>✅ Correct! +${pts} points</strong><div class="rationale">${rationale}</div>`;
+  } else {
+    el.classList.add('wrong');
+    el.querySelector('.opt-mark').textContent = '✗';
+    fb.className = 'feedback-box show feedback-wrong';
+    fb.innerHTML = `<strong>Not quite.</strong><div class="rationale">${rationale}</div>`;
+  }
+  checkMastery();
+}
+
+// ─── CODE SET SCENARIOS ──────────────────────────────────────────
+const scenarioAnswers = {1:'cpt', 2:'icd', 3:'hcpcs', 4:'hcpcs'};
+const scenarioRationales = {
+  1: { cpt: {ok:true, msg:'✅ Correct! +10 pts — The EKG interpretation is a service the cardiologist PERFORMED. Procedures and services = CPT.'}, hcpcs:{ok:false, msg:'HCPCS Level II covers supplies and equipment, not physician-performed services like an EKG.'}, icd:{ok:false, msg:'ICD-10-CM reports the diagnosis (chest pain), not the EKG procedure.'} },
+  2: { icd: {ok:true, msg:'✅ Correct! +10 pts — Atrial fibrillation is a DIAGNOSIS. Diagnoses = ICD-10-CM.'}, cpt:{ok:false, msg:'CPT covers what the provider did — not what the diagnosis is.'}, hcpcs:{ok:false, msg:'HCPCS Level II covers supplies and services not in CPT — not diagnoses.'} },
+  3: { hcpcs: {ok:true, msg:'✅ Correct! +10 pts — A walker is durable medical equipment (DME). DME billing = HCPCS Level II.'}, cpt:{ok:false, msg:'CPT covers services and procedures the provider performs — not equipment supplied to the patient.'}, icd:{ok:false, msg:'ICD-10-CM covers diagnoses. The walker is not a diagnosis.'} },
+  4: { hcpcs: {ok:true, msg:'✅ Correct! +10 pts — Injectable drugs are reported with HCPCS Level II J-codes. The injection service itself uses CPT, but the drug separately uses HCPCS Level II.'}, cpt:{ok:false, msg:'CPT covers the injection service itself. The drug (medication) is separately coded with HCPCS Level II.'}, icd:{ok:false, msg:'ICD-10-CM covers diagnoses — not medications or supplies.'} }
+};
+
+const scenarioDone = {};
+function checkScenario(num, choice, btn) {
+  if(scenarioDone[num]) return;
+  scenarioDone[num] = true;
+  const fb = document.getElementById('fb-sc'+num);
+  const r = scenarioRationales[num][choice];
+  const btns = btn.closest('.btn-group').querySelectorAll('.btn');
+  btns.forEach(b => { b.disabled=true; b.style.opacity='0.6'; });
+  btn.style.opacity='1';
+  if(r.ok) {
+    addScore(10);
+    fb.className = 'feedback-box show feedback-correct';
+    btn.style.background='var(--green)'; btn.style.color='white';
+  } else {
+    fb.className = 'feedback-box show feedback-wrong';
+    btn.style.background='var(--red)'; btn.style.color='white';
+  }
+  fb.innerHTML = r.msg;
+}
+
+// ─── CODESET EXPAND ──────────────────────────────────────────────
+function toggleCodeset(key) {
+  const map = {cpt:'cs-cpt', hcpcs:'cs-hcpcs', icd:'cs-icd'};
+  const el = document.getElementById(map[key]);
+  const wasActive = el.classList.contains('active');
+  document.querySelectorAll('.codeset-card').forEach(c => c.classList.remove('active'));
+  if(!wasActive) el.classList.add('active');
+}
+
+// ─── SOAP DRAG AND DROP ──────────────────────────────────────────
+function dragStart(event, cat) {
+  dragSource = event.target;
+  event.dataTransfer.setData('cat', cat);
+  event.dataTransfer.setData('text', event.target.outerHTML);
+}
+
+function dropToSOAP(event, col) {
+  event.preventDefault();
+  const dropZone = document.getElementById('drop-'+col);
+  dropZone.classList.remove('over');
+  if(dragSource && dragSource.parentElement) {
+    dragSource.parentElement.removeChild(dragSource);
+    dragSource.setAttribute('draggable','true');
+    dragSource.setAttribute('ondragstart', `dragStart(event,'${dragSource.dataset.cat}')`);
+    dropZone.appendChild(dragSource);
+  }
+  dragSource = null;
+}
+
+function dropToBank(event) {
+  event.preventDefault();
+  const bank = document.getElementById('chipBank');
+  bank.classList.remove('over');
+  if(dragSource && dragSource.parentElement) {
+    dragSource.parentElement.removeChild(dragSource);
+    bank.appendChild(dragSource);
+  }
+  dragSource = null;
+}
+
+function checkSOAP() {
+  const cols = ['s','o','a','p'];
+  let correct = 0, total = 0;
+  cols.forEach(col => {
+    const zone = document.getElementById('drop-'+col);
+    zone.querySelectorAll('.drag-chip').forEach(chip => {
+      total++;
+      if(chip.dataset.cat === col) { correct++; chip.style.outline='2px solid green'; }
+      else { chip.style.outline='2px solid red'; }
+    });
+  });
+  const fb = document.getElementById('soapFeedback');
+  fb.classList.add('show');
+  if(correct === total && total === 8) {
+    fb.className='feedback-box show feedback-correct';
+    fb.innerHTML=`✅ Perfect! All 8 statements sorted correctly. You understand SOAP structure well.`;
+    addScore(20);
+  } else {
+    fb.className='feedback-box show feedback-wrong';
+    fb.innerHTML=`${correct} of ${total} correct. Red-outlined chips are in the wrong column. Use the SOAP card definitions above to reconsider the highlighted ones.`;
+  }
+}
+
+function resetSOAP() {
+  const bank = document.getElementById('chipBank');
+  ['s','o','a','p'].forEach(col => {
+    const zone = document.getElementById('drop-'+col);
+    zone.querySelectorAll('.drag-chip').forEach(chip => {
+      chip.style.outline='';
+      bank.appendChild(chip);
+    });
+  });
+  const fb = document.getElementById('soapFeedback');
+  fb.classList.remove('show');
+}
+
+// ─── SOAP HIGHLIGHT ──────────────────────────────────────────────
+function highlightSOAP(section) {
+  clearHighlights();
+  const el = document.getElementById('sn-'+section);
+  if(el) el.style.display='inline';
+}
+
+function clearHighlights() {
+  ['s','o','a','p'].forEach(s => {
+    const el = document.getElementById('sn-'+s);
+    if(el) el.style.display='none';
+  });
+}
+
+// ─── CODING FLOW ─────────────────────────────────────────────────
+function showFlowStep(n) {
+  document.getElementById('flowStep'+n).style.display='block';
+  if(document.getElementById('flowArrow'+n)) document.getElementById('flowArrow'+n).style.display='block';
+}
+
+// ─── CHAR INFO ───────────────────────────────────────────────────
+const charData = [
+  {title:'Character 1: S', desc:'The letter S identifies this code as belonging to Chapter 19 of ICD-10-CM: Injury, poisoning and certain other consequences of external causes. Every ICD-10-CM code begins with a letter (A–Z).'},
+  {title:'Character 2: 5', desc:'The second character narrows the category. S5X codes relate to injuries of the forearm and elbow area.'},
+  {title:'Character 3: 2', desc:'Together, S52 = Category code for "Fracture of forearm." This 3-character combination is the category code — the starting point for all forearm fracture codes.'},
+  {title:'Decimal Point', desc:'The decimal point separates the category (first 3 characters) from the specificity characters. It is a visual separator — not counted as a code character.'},
+  {title:'Character 4: 2', desc:'After the decimal, Character 4 adds specificity: the .2 indicates the fracture is of the shaft (middle section) of a forearm bone.'},
+  {title:'Character 5: 0', desc:'Character 5 adds more detail: the "0" here contributes to identifying the specific bone and fracture type (shaft of ulna, unspecified fracture type).'},
+  {title:'Character 6: 1', desc:'Character 6 adds laterality: 1 = right side. This tells us it is the right ulna being fractured.'},
+  {title:'Character 7: A', desc:'Character 7 is the encounter type: A = Initial encounter (the first time the patient is treated for this condition). S = Subsequent, D = Sequela.'}
+];
+
+function showCharInfo(i) {
+  const box = document.getElementById('charInfo');
+  box.style.display='block';
+  box.innerHTML=`<strong>${charData[i].title}:</strong> ${charData[i].desc}`;
+  document.querySelectorAll('.code-char').forEach((c,j) => {
+    c.style.transform = j===i ? 'scale(1.15)' : 'scale(1)';
+    c.style.zIndex = j===i ? '10' : '1';
+  });
+}
+
+// ─── REVEAL TOGGLE ───────────────────────────────────────────────
+function toggleReveal(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('show');
+}
+
+// ─── SIMULATION ──────────────────────────────────────────────────
+let simCurrent = 0;
+const simDone = {};
+
+function simAnswer(step, result, msg) {
+  if(simDone[step]) return;
+  simDone[step] = true;
+  const fb = document.getElementById('sim'+step);
+  fb.classList.add('show');
+  if(result === 'correct') {
+    fb.className='feedback-box show feedback-correct';
+    fb.innerHTML=`${msg}`;
+    addScore(10);
+    // Show next step after delay
+    setTimeout(() => {
+      if(step < 4) {
+        simCurrent = step + 1;
+        document.getElementById('simStep'+simCurrent).classList.add('active');
+        document.getElementById('sdot'+(step)).classList.replace('active','done');
+        document.getElementById('sdot'+simCurrent).classList.add('active');
+      }
+    }, 1500);
+  } else {
+    fb.className='feedback-box show feedback-wrong';
+    fb.innerHTML=`<strong>Not quite.</strong> ${msg} <br><em>Re-read the options and try again.</em>`;
+    simDone[step] = false;
+  }
+}
+
+function completeSim() {
+  document.getElementById('sdot4').classList.replace('active','done');
+  addScore(10);
+  document.getElementById('mastery7').classList.add('show');
+  markSectionDone(6);
+}
+
+// ─── CHANGE ACTIVITIES ───────────────────────────────────────────
+const changeDone = {};
+function checkChange(id, choice, msg) {
+  if(changeDone[id]) return;
+  changeDone[id] = true;
+  const fb = document.getElementById(id);
+  fb.classList.add('show');
+  const btns = fb.previousElementSibling.querySelectorAll('.btn');
+  btns.forEach(b => { b.disabled=true; b.style.opacity='0.6'; });
+  if(msg.startsWith('✅')) {
+    fb.className='feedback-box show feedback-correct';
+    addScore(10);
+  } else {
+    fb.className='feedback-box show feedback-wrong';
+  }
+  fb.innerHTML=msg;
+}
+
+// ─── ARENA ANSWERS ───────────────────────────────────────────────
+const arenaCorrectMap = {a1:'B', a2:'B', a3:'A', a4:'A', a5:'A', a6:'A', a7:'A', a8:'A', a9:'A', a10:'A'};
+const arenaRationales = {
+  a1: {B:'✅ +10 pts — Ambulance transport is a non-CPT service. It is reported using HCPCS Level II (specifically A-codes for transportation).', other:'Ambulance is a transportation service — not a physician-performed procedure (CPT) and not a diagnosis (ICD-10-CM). HCPCS Level II covers ambulance.'},
+  a2: {B:'✅ +10 pts — Clear lungs, no wheezing, and SpO2 are all provider-observed physical exam findings. That is Objective documentation.', other:'These are measurable, observable findings documented by the provider. That is Objective (O), not the patient\'s reported symptoms (S) or a diagnosis (A).'},
+  a3: {A:'✅ +10 pts — K21 is the 3-character category code. The decimal and the 0 following it add specificity (with esophagitis).', other:'The category code is always the first 3 characters. K21.0 includes the specificity character. K2 is incomplete.'},
+  a4: {A:'✅ +10 pts — When documentation says only "hypertension" with no additional detail (no kidney disease, no heart failure), code I10 (Essential/primary hypertension) is correct.', other:'The other codes require additional documented conditions. I13.10 requires heart AND kidney disease. I12.9 requires kidney disease. Neither is documented here.'},
+  a5: {A:'✅ +10 pts — ICD-10-CM guidelines default to Type 2 diabetes when the type is not specified. E11.9 is the correct code.', other:'You should not guess based on physical characteristics. ICD-10-CM guidelines provide a default (Type 2) for unspecified diabetes. You do not leave the field blank.'},
+  a6: {A:'✅ +10 pts — The Assessment section contains the provider\'s documented diagnosis. ICD-10-CM codes are assigned to report diagnoses.', other:'The Assessment contains the diagnosis — that\'s where ICD-10-CM codes come from. S is the patient\'s complaint. P is what was ordered (CPT codes come from there).'},
+  a7: {A:'✅ +10 pts — M54.5 starts with a letter, followed by numbers, then a decimal and specificity character. This is valid ICD-10-CM structure.', other:'54.M5 puts numbers before the letter (invalid). 99213 is all-numeric — that\'s a CPT code, not ICD-10-CM.'},
+  a8: {A:'✅ +10 pts — The referral to ophthalmology and the A1C/glucose lab order are services the provider is ordering. Provider services = CPT.', other:'ICD-10-CM reports the diagnosis (diabetes). Metformin is a medication — it might be coded with NDC or HCPCS separately, but the lab and referral services come from CPT.'},
+  a9: {A:'✅ +10 pts — A wellness visit is a service provided by the provider. Services = CPT. (The Z-code for the reason, like Z00.00, would be ICD-10-CM, but the visit itself is CPT.)', other:'The wellness visit IS codeable. It is a service performed by the provider (CPT). The reason for the visit (wellness/preventive) would use an ICD-10-CM Z-code, but the service itself is CPT.'},
+  a10: {A:'✅ +10 pts — A coder reads documentation, translates it to codes, and supports the billing process. They do not make clinical decisions or add information the provider did not document.', other:'Coders do not make medical decisions, fill documentation gaps, or decide what insurance will pay. They translate documented information into standardized codes.'}
+};
+
+const arenaDone = {};
+function arenaAns(id, choice, correct, el) {
+  if(arenaDone[id]) return;
+  arenaDone[id] = true;
+  const fb = document.getElementById(id);
+  fb.classList.add('show');
+  const parent = el.closest('.quiz-options');
+  parent.querySelectorAll('.quiz-option').forEach(o => o.classList.add('disabled'));
+  const isCorrect = (choice === arenaCorrectMap[id]);
+  if(isCorrect) {
+    el.classList.add('correct');
+    addScore(10);
+    arenaCorrect++;
+    fb.className='feedback-box show feedback-correct';
+    fb.innerHTML=`<div class="rationale">${arenaRationales[id][choice]||arenaRationales[id][arenaCorrectMap[id]]}</div>`;
+  } else {
+    el.classList.add('wrong');
+    fb.className='feedback-box show feedback-wrong';
+    fb.innerHTML=`<div class="rationale">${arenaRationales[id].other||'Review the concept and try again next time.'}</div>`;
+    // Highlight correct
+    parent.querySelectorAll('.quiz-option').forEach((o,i) => {
+      const letters=['A','B','C','D'];
+      if(letters[i] === arenaCorrectMap[id]) o.classList.add('correct');
+    });
+  }
+  arenaAnswered++;
+  const pct = (arenaAnswered/10)*100;
+  document.getElementById('arenaProg').style.width=pct+'%';
+  document.getElementById('arenaScore').textContent=`${arenaCorrect*10} / 100`;
+  if(arenaAnswered >= 10) {
+    document.getElementById('mastery8').classList.add('show');
+    markSectionDone(7);
+  }
+}
+
+// ─── MASTERY CHECK ───────────────────────────────────────────────
+function checkMastery() {
+  // Check each section's completion based on answered quizzes
+  const s2Qs = ['q2-1','q2-2','q2-3'];
+  const s3Qs = ['q3-1','q3-2','q3-3'];
+  const s4Qs = ['q4-1','q4-2'];
+  const s5Qs = ['q5-1','q5-2','q5-3'];
+  const s6Qs = ['q6-1','q6-2','q6-3','q6-4'];
+
+  if(s2Qs.every(q=>answeredQuizzes.has(q))) { document.getElementById('mastery2').classList.add('show'); markSectionDone(1); }
+  if(s3Qs.every(q=>answeredQuizzes.has(q))) { document.getElementById('mastery3').classList.add('show'); markSectionDone(2); }
+  if(s4Qs.every(q=>answeredQuizzes.has(q))) { document.getElementById('mastery4').classList.add('show'); markSectionDone(3); }
+  if(s5Qs.every(q=>answeredQuizzes.has(q))) { document.getElementById('mastery5').classList.add('show'); markSectionDone(4); }
+  if(s6Qs.every(q=>answeredQuizzes.has(q))) { document.getElementById('mastery6').classList.add('show'); markSectionDone(5); }
+}
+
+function markSectionDone(idx) {
+  if(sectionsDone.has(idx)) return;
+  sectionsDone.add(idx);
+  const tab = document.getElementById('tab'+idx);
+  if(tab) tab.classList.add('completed');
+}
+
+// ─── TIMED CHALLENGE ─────────────────────────────────────────────
+const challengeBank = [
+  {q:'Which code set reports a provider-performed MRI of the knee?', opts:['CPT','HCPCS Level II','ICD-10-CM'], ans:0, rat:'CPT reports procedures and services performed by providers. An MRI is a service/procedure.'},
+  {q:'A patient is diagnosed with acute otitis media. Which code set reports this diagnosis?', opts:['CPT','HCPCS Level II','ICD-10-CM'], ans:2, rat:'Diagnoses are reported with ICD-10-CM. Acute otitis media is a diagnosis.'},
+  {q:'A patient receives a standard wheelchair after a stroke. Which code set reports the wheelchair?', opts:['CPT','HCPCS Level II','ICD-10-CM'], ans:1, rat:'A wheelchair is durable medical equipment (DME) — reported with HCPCS Level II.'},
+  {q:'In a SOAP note, "Patient reports pain score of 8/10 in right shoulder" belongs in which section?', opts:['S — Subjective','O — Objective','A — Assessment','P — Plan'], ans:0, rat:'The patient reports their pain — that is their own subjective description. Belongs in S.'},
+  {q:'In a SOAP note, "X-ray shows no fracture. Full range of motion." belongs in which section?', opts:['S — Subjective','O — Objective','A — Assessment','P — Plan'], ans:1, rat:'X-ray findings and physical exam findings are objective, measurable data — belongs in O.'},
+  {q:'What is the category code in K92.1 (Melena)?', opts:['K9','K92','K92.1','K'], ans:1, rat:'The category code is always the first 3 characters: K92. The .1 adds specificity.'},
+  {q:'In ICD-10-CM, the first character of every code is:', opts:['Always a number','Always a letter','Either a letter or number depending on the condition','Always 3 digits'], ans:1, rat:'The first character of every ICD-10-CM code is always a letter (A–Z). This distinguishes it from CPT (all numeric).'},
+  {q:'Which is more specific: M79.3 or M79.3 alone vs M79.311?', opts:['M79.3 (broader, less detail)','M79.311 (more specific, adds location/laterality)','They are equally specific'], ans:1, rat:'M79.311 adds characters that specify the exact location and side. More characters = more specificity in ICD-10-CM.'},
+  {q:'A provider writes "Assessment: Chest pain." A coder should:', opts:['Code the chief complaint from S section instead','Code what is documented — chest pain — using the most specific available code','Look up the probable cause and code that instead'], ans:1, rat:'Code only what is documented. "Chest pain" is documented in the Assessment — use the appropriate chest pain ICD-10-CM code.'},
+  {q:'ICD-10-CM stands for:', opts:['International Coding for Diagnoses, 10th Revision','International Classification of Diseases, 10th Revision, Clinical Modification','Integrated Clinical Diagnosis, 10th Manual'], ans:1, rat:'ICD-10-CM = International Classification of Diseases, 10th Revision, Clinical Modification. Adapted for US clinical use.'},
+  {q:'In a SOAP note, "Prescribe metformin 500mg BID, return in 3 months" belongs in:', opts:['A — Assessment','P — Plan','O — Objective'], ans:1, rat:'Prescriptions, return visits, and orders are all in the Plan section. CPT codes often come from this section.'},
+  {q:'A coder cannot determine from the documentation whether a fracture is open or closed. What should the coder do?', opts:['Code open fracture — it is safer','Code closed fracture — it is the default per ICD-10-CM guidelines','Skip the code entirely'], ans:1, rat:'Per ICD-10-CM guidelines, when a fracture is not specified as open or closed, code it as closed (closed is the default).'},
+  {q:'Which code set would report an office visit for an established patient?', opts:['HCPCS Level II','ICD-10-CM','CPT'], ans:2, rat:'Office visits are physician services — reported with CPT. The reason for the visit would use ICD-10-CM, but the visit itself is CPT.'},
+  {q:'What do characters 4–7 (after the decimal) in an ICD-10-CM code typically add?', opts:['The chapter and category','Specificity — such as side, type, or encounter','The publisher information'], ans:1, rat:'Characters after the decimal add clinical specificity: which side, what type of condition, which encounter (initial, subsequent, etc.).'},
+  {q:'A provider diagnoses "acute pharyngitis." The coder finds J02.9 (Acute pharyngitis, unspecified) and J02.0 (Streptococcal pharyngitis). No throat culture is documented. Which should the coder choose?', opts:['J02.0 — strep is very common','J02.9 — no organism was documented','Either one is fine'], ans:1, rat:'Without documentation of the causative organism, the coder must use the unspecified code (J02.9). Coding strep without documented evidence would be inaccurate.'}
+];
+
+let cTimer = null, cTimeLeft = 60, cQIdx = 0, cScore = 0;
+let cOrder = [], cMissed = [];
+
+function shuffleArr(arr) { return arr.slice().sort(()=>Math.random()-0.5); }
+
+function startChallenge() {
+  cScore = 0; cQIdx = 0; cMissed = [];
+  cOrder = shuffleArr([...Array(challengeBank.length).keys()]).slice(0,15);
+  document.getElementById('challengeStart').style.display='none';
+  document.getElementById('challengeResults').style.display='none';
+  document.getElementById('challengeGame').style.display='block';
+  document.getElementById('challengeScore').textContent='0';
+  renderChallengeQ();
+}
+
+function renderChallengeQ() {
+  if(cQIdx >= cOrder.length) { endChallenge(); return; }
+  clearInterval(cTimer);
+  cTimeLeft = 60;
+  const q = challengeBank[cOrder[cQIdx]];
+  document.getElementById('challengeQNum').textContent = `${cQIdx+1} / ${cOrder.length}`;
+  document.getElementById('challengeQProg').style.width = ((cQIdx/cOrder.length)*100)+'%';
+  const ring = document.getElementById('timerRing');
+  ring.className='timer-ring';
+  document.getElementById('timerDisplay').textContent=60;
+
+  const area = document.getElementById('challengeQArea');
+  area.innerHTML=`<div class="quiz-q"><span class="quiz-num">${cQIdx+1}</span>${q.q}</div>
+    <div class="quiz-options" id="cOpts">${q.opts.map((o,i)=>`
+      <div class="quiz-option" onclick="cAnswer(${i})"><span class="opt-mark">${'ABCD'[i]}</span>${o}</div>
+    `).join('')}</div>
+    <div class="feedback-box" id="cFb"></div>
+    <div id="cNext" style="display:none;margin-top:12px">
+      <button class="btn btn-primary btn-sm" onclick="nextChallengeQ()">Next Question →</button>
+    </div>`;
+
+  cTimer = setInterval(()=>{
+    cTimeLeft--;
+    document.getElementById('timerDisplay').textContent=cTimeLeft;
+    if(cTimeLeft<=15) ring.className='timer-ring warning';
+    if(cTimeLeft<=5) ring.className='timer-ring danger';
+    if(cTimeLeft<=0) { clearInterval(cTimer); timeoutQ(); }
+  }, 1000);
+}
+
+let cAnswered = false;
+function cAnswer(choice) {
+  if(cAnswered) return;
+  cAnswered = true;
+  clearInterval(cTimer);
+  const q = challengeBank[cOrder[cQIdx]];
+  const opts = document.getElementById('cOpts').querySelectorAll('.quiz-option');
+  opts.forEach(o=>o.classList.add('disabled'));
+  const fb = document.getElementById('cFb');
+  fb.classList.add('show');
+  if(choice === q.ans) {
+    opts[choice].classList.add('correct');
+    cScore += 10;
+    document.getElementById('challengeScore').textContent=cScore;
+    addScore(5);
+    fb.className='feedback-box show feedback-correct';
+    fb.innerHTML=`<strong>✅ Correct!</strong> <div class="rationale">${q.rat}</div>`;
+  } else {
+    opts[choice].classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    cMissed.push({q:q.q, correct:q.opts[q.ans], rat:q.rat});
+    fb.className='feedback-box show feedback-wrong';
+    fb.innerHTML=`<strong>Not quite.</strong> <div class="rationale">${q.rat}</div>`;
+  }
+  document.getElementById('cNext').style.display='block';
+}
+
+function timeoutQ() {
+  cAnswered = false;
+  const q = challengeBank[cOrder[cQIdx]];
+  cMissed.push({q:q.q, correct:q.opts[q.ans], rat:q.rat});
+  const opts = document.getElementById('cOpts').querySelectorAll('.quiz-option');
+  opts.forEach(o=>o.classList.add('disabled'));
+  opts[q.ans].classList.add('correct');
+  const fb = document.getElementById('cFb');
+  fb.className='feedback-box show feedback-wrong';
+  fb.classList.add('show');
+  fb.innerHTML=`<strong>⏱ Time's up!</strong> <div class="rationale">${q.rat}</div>`;
+  document.getElementById('cNext').style.display='block';
+}
+
+function nextChallengeQ() {
+  cAnswered = false;
+  cQIdx++;
+  renderChallengeQ();
+}
+
+function endChallenge() {
+  clearInterval(cTimer);
+  document.getElementById('challengeGame').style.display='none';
+  document.getElementById('challengeResults').style.display='block';
+  const pct = Math.round((cScore / (cOrder.length*10))*100);
+  document.getElementById('finalScore').textContent=cScore;
+  document.getElementById('finalOutOf').textContent=`out of ${cOrder.length*10} possible points`;
+  const grade = document.getElementById('finalGrade');
+  if(pct>=90) { grade.textContent='⭐ Excellent!'; grade.className='score-grade'; grade.style.background='#dcfce7'; grade.style.color='#16a34a'; }
+  else if(pct>=75) { grade.textContent='✅ Great Work!'; grade.className='score-grade'; grade.style.background='#eff6ff'; grade.style.color='#2563eb'; }
+  else if(pct>=60) { grade.textContent='🔄 Keep Practicing'; grade.className='score-grade'; grade.style.background='#fefce8'; grade.style.color='#ca8a04'; }
+  else { grade.textContent='📖 Review the Material'; grade.className='score-grade'; grade.style.background='#fff1f2'; grade.style.color='#dc2626'; }
+  markSectionDone(8);
+
+  if(cMissed.length>0) {
+    document.getElementById('missedSection').style.display='block';
+    document.getElementById('missedList').innerHTML=cMissed.map(m=>`
+      <div class="missed-item">
+        <div class="mi-q">${m.q}</div>
+        <div class="mi-a">✅ Correct answer: ${m.correct}</div>
+        <div style="font-size:0.8rem;color:var(--text2);margin-top:4px">${m.rat}</div>
+      </div>
+    `).join('');
+  }
+}
+
+// ─── ACCORDION ───────────────────────────────────────────────────
+document.querySelectorAll('.accordion-header').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.parentElement.classList.toggle('open');
+  });
+});
+
+// ─── INIT ────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('timerDisplay') && (document.getElementById('timerDisplay').textContent = '60');
+});
+</script>
+</body>
+</html>
